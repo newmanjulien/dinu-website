@@ -23,8 +23,12 @@ const ease = bezier(.25, .1, .25, 1);
 const cssEaseOut = bezier(0, 0, .58, 1);
 const easeInOut = bezier(.42, 0, .58, 1);
 const mix = (from: number, to: number, amount: number) => from + (to - from) * amount;
+// Use the 700px interior of the original 702px frame as the feature zoom baseline.
+const featureReferenceWidth = 700;
+const featureZoom = 1.05 * 1.05;
 export interface CursorFrame { x: number; y: number; opacity: number; ringOpacity: number; ringScale: number; scale: number }
 interface Elements { frame: HTMLElement; stage: HTMLElement; viewport: HTMLElement; column: HTMLElement; rail: HTMLElement }
+interface FrameInputs { width: number; height: number; mobile: boolean; pixelRatio: number }
 interface Bounds { left: number; right: number; top: number; bottom: number }
 interface SceneMeasurements {
 	clauses: Map<string, Bounds>; revisions: Map<string, Bounds>; targets: Map<string, TargetPoint>;
@@ -86,6 +90,8 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 	let version = 0;
 	let destroyed = false;
 	let queued = false;
+	let fontsChanged = false;
+	let preparationInputs: FrameInputs | undefined;
 	let saved: { step: AnimationStep; from: MotionValues; cursorFrom: { x: number; y: number }; cursorOpacityFrom: number; cursorFromTarget?: AnimationTarget; fromScene?: AnimationState } | undefined;
 
 	function point(point: TargetPoint, offsets: MotionValues = values) {
@@ -173,6 +179,11 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 		return { clauses, revisions, targets, panelBounds, actions, panelScrollHeight: 0, panelHeight: 0 };
 	}
 
+	function readFrameInputs(): FrameInputs {
+		return { width: frame.clientWidth, height: frame.clientHeight,
+			mobile: window.matchMedia('(max-width: 639px)').matches, pixelRatio: window.devicePixelRatio || 1 };
+	}
+
 	async function prepare(beat: AnimationStep, reduced: boolean, resize = false) {
 		const revision = ++version;
 		playback.setReady(false);
@@ -200,11 +211,15 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 		}
 		await tick();
 		if (destroyed || revision !== version) return;
-		mobile = window.matchMedia('(max-width: 639px)').matches;
-		pixelRatio = window.devicePixelRatio || 1;
-		const frameWidth = frame.clientWidth, frameHeight = frame.clientHeight;
+		const inputs = readFrameInputs();
+		mobile = inputs.mobile;
+		pixelRatio = inputs.pixelRatio;
+		const { width: frameWidth, height: frameHeight } = inputs;
 		if (!frameWidth || !frameHeight) return;
-		stage.style.width = `${mobile ? frameWidth : 1440}px`;
+		// Record in-flight inputs so overlapping resize notifications can skip this preparation.
+		preparationInputs = inputs;
+		const stageWidth = `${mobile ? frameWidth : 1440}px`;
+		if (stage.style.width !== stageWidth) stage.style.width = stageWidth;
 		render(mobile, values.cursor);
 		await tick(); // Apply mobile paper widths before collecting any geometry.
 		if (destroyed || revision !== version) return;
@@ -231,8 +246,11 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 			else if (viewedBounds) { cropX = Math.min(viewedBounds.left, 920) - 24; cropWidth = Math.max(viewedBounds.right, 1360) - cropX + 24; }
 		}
 		width = frameWidth;
-		scale = mobile ? 1 : frameWidth / cropWidth;
+		scale = mobile ? 1 : (framing === 'feature' ? Math.min(frameWidth, featureReferenceWidth * featureZoom) : frameWidth) / cropWidth;
 		height = frameHeight / scale;
+		const visibleWidth = frameWidth / scale;
+		// Keep the feature camera centered as its frame widens or zoom changes.
+		if (!mobile && framing === 'feature') cropX -= (visibleWidth - cropWidth) / 2;
 		target = cursorTarget ? resolve(cursorTarget) : undefined;
 		panelVisible = Boolean(beat.state.box) && !(mobile && beat.state.viewport === 'revision');
 		guidanceEntrance = Boolean(beat.motion?.guidance);
@@ -266,7 +284,6 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 			panelScroll, paper: framing === 'hero' && !mobile && !panelVisible ? 232 : 0, opacity: beat.state.opacity ?? 1
 		};
 		// Every read above precedes these layout writes; frames below perform no DOM reads.
-		stage.style.width = `${mobile ? frameWidth : 1440}px`;
 		stage.style.height = `${height}px`;
 		stage.style.setProperty('--stage-height', `${height}px`);
 		stage.style.transform = `translateX(${-cropX * scale}px) scale(${scale})`;
@@ -299,17 +316,25 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 	function remeasure() {
 		if (queued || destroyed) return;
 		queued = true;
-		playback.setReady(false);
-		void tick().then(() => { queued = false; if (!destroyed) void prepare(playback.step, playback.reducedMotion, true); });
+		void tick().then(() => {
+			queued = false;
+			if (destroyed) return;
+			const inputs = readFrameInputs(), previous = preparationInputs;
+			if (!fontsChanged && previous && inputs.width === previous.width && inputs.height === previous.height
+				&& inputs.mobile === previous.mobile && inputs.pixelRatio === previous.pixelRatio) return;
+			fontsChanged = false;
+			void prepare(playback.step, playback.reducedMotion, true);
+		});
 	}
+	function fontsLoaded() { fontsChanged = true; remeasure(); }
 	const observer = new ResizeObserver(remeasure);
 	observer.observe(frame);
 	window.addEventListener('resize', remeasure);
-	document.fonts?.addEventListener('loadingdone', remeasure);
+	document.fonts?.addEventListener('loadingdone', fontsLoaded);
 	return { prepare, apply, destroy() {
 		destroyed = true; version++;
 		observer.disconnect();
 		window.removeEventListener('resize', remeasure);
-		document.fonts?.removeEventListener('loadingdone', remeasure);
+		document.fonts?.removeEventListener('loadingdone', fontsLoaded);
 	} };
 }

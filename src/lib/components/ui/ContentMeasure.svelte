@@ -1,19 +1,17 @@
-<script module lang="ts">
-  export const CONTENT_MAX_WIDTH = 702;
-</script>
-
 <script lang="ts">
   import type { Snippet } from 'svelte';
 
   let {
     children,
-    class: className
+    class: className,
+    maxWidth = 1040
   }: {
     children: Snippet;
     class?: string;
+    maxWidth?: number;
   } = $props();
 </script>
 
-<div class={['mx-auto w-full', className]} style:max-width={`${CONTENT_MAX_WIDTH}px`}>
+<div class={['mx-auto w-full', className]} style:max-width={`${maxWidth}px`}>
   {@render children()}
 </div>

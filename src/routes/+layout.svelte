@@ -2,8 +2,7 @@
   import '$lib/styles/marketing.css';
   import type { LayoutProps } from './$types';
   import CalendarButton from '$lib/components/site/CalendarButton.svelte';
-  import DesktopHeaderActions from '$lib/components/site/DesktopHeaderActions.svelte';
-  import DesktopSideMenu from '$lib/components/site/DesktopSideMenu.svelte';
+  import DesktopHeader from '$lib/components/site/DesktopHeader.svelte';
   import Footer from '$lib/components/site/Footer.svelte';
   import MobileHeader from '$lib/components/site/MobileHeader.svelte';
 
@@ -16,8 +15,7 @@
 
 
 <div class="flex min-h-[100dvh] flex-col bg-[var(--site-bg)]">
-  <DesktopSideMenu />
-  <DesktopHeaderActions />
+  <DesktopHeader />
   <MobileHeader />
   <CalendarButton />
 

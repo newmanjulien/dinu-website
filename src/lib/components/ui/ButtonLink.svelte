@@ -6,36 +6,33 @@
     href: string;
     variant: 'primary' | 'secondary' | 'soft';
     size: 'small' | 'medium' | 'large' | 'xlarge';
-    shape?: 'default' | 'pill';
+    shape?: 'pill' | 'soft-pill';
     fullWidth?: boolean;
-    highlightSweep?: boolean;
     children: Snippet;
   };
 
   let {
     variant,
     size,
-    shape = 'default',
+    shape = 'pill',
     fullWidth = false,
-    highlightSweep = false,
     children,
     class: className,
     ...anchorProps
   }: ButtonLinkProps = $props();
 
   const baseClasses =
-    'inline-flex items-center justify-center font-book leading-none transition-colors duration-200 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black';
-  const shapeClasses = { default: 'rounded-[8px]', pill: 'rounded-full' };
+    'inline-flex items-center justify-center font-book leading-none ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black';
   const sizeClasses = {
-    small: 'h-[40px] px-[14px] text-[14px]',
-    medium: 'h-[44px] px-[14px] text-[14px]',
-    large: 'h-[48px] px-[23px] text-[16px]',
-    xlarge: 'h-[58px] px-[26px] text-[17px]'
+    small: 'h-[40px] px-[12px] text-[14px]',
+    medium: 'h-[44px] px-[10px] text-[14px]',
+    large: 'h-[48px] px-[17px] text-[16px]',
+    xlarge: 'h-[58px] px-[22px] text-[17px]'
   };
   const variantClasses = {
-    primary: 'bg-ink text-white hover:bg-ink/90',
-    secondary: 'border border-line bg-surface text-ink hover:bg-canvas',
-    soft: 'bg-canvas text-ink hover:bg-hover hover:text-ink'
+    primary: 'bg-ink text-white',
+    secondary: 'border border-line bg-surface text-ink hover:border-line-mid hover:bg-canvas',
+    soft: 'bg-canvas text-ink hover:bg-[#eaeaea]'
   };
 </script>
 
@@ -43,30 +40,15 @@
   {...anchorProps}
   class={[
     baseClasses,
-    shapeClasses[shape],
+    shape === 'soft-pill'
+      ? 'rounded-[20px] transition-[background-color,border-color,box-shadow,translate] duration-[180ms] motion-reduce:transition-none'
+      : 'rounded-full transition-[color,background-color,border-color,box-shadow] duration-200',
     sizeClasses[size],
     variantClasses[variant],
+    variant !== 'primary' && 'hover:shadow-[0_2px_6px_rgba(32,33,36,0.08)]',
     fullWidth && 'w-full',
-    highlightSweep && "button-link-highlight-sweep relative overflow-hidden after:pointer-events-none after:absolute after:-inset-y-[40%] after:-left-[55%] after:w-[42%] after:content-[''] motion-reduce:hover:after:animate-none",
     className
   ]}
 >
   {@render children()}
 </a>
-
-<style>
-  @layer components {
-    .button-link-highlight-sweep::after {
-      transform: skewX(-24deg);
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.04) 24%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.04) 76%, transparent 100%);
-    }
-
-    .button-link-highlight-sweep:hover::after {
-      animation: button-link-highlight-sweep 1160ms cubic-bezier(0.22, 1, 0.36, 1) 160ms;
-    }
-
-    @keyframes button-link-highlight-sweep {
-      to { transform: skewX(-24deg) translateX(430%); }
-    }
-  }
-</style>

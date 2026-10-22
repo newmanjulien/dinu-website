@@ -1,9 +1,9 @@
 <script lang="ts">
   import { tick } from 'svelte';
   import { CalendarBlankIcon } from 'phosphor-svelte';
+  import { BOOK_DEMO_URL } from '$lib/data/booking';
 
   const GAP = 20;
-  const BOOK_URL = 'https://cal.com/juliennewman/julien?user=juliennewman';
 
   let bottom = $state(GAP);
   let open = $state(false);
@@ -65,7 +65,7 @@
     >
       <a
         bind:this={link}
-        href={BOOK_URL}
+        href={BOOK_DEMO_URL}
         target="_blank"
         rel="noopener noreferrer"
         class="flex flex-col text-inherit no-underline"

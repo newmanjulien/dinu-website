@@ -7,12 +7,14 @@
     title,
     body,
     children,
-    id
+    id,
+    maxWidth
   }: {
     title: string;
     body: Snippet;
     children?: Snippet;
     id?: string;
+    maxWidth?: number;
   } = $props();
 
   let viewed = $state(true);
@@ -33,7 +35,7 @@
 
 <div class={['reveal-section will-change-[opacity] motion-reduce:transition-none', viewed ? 'visible opacity-100 is-viewed' : 'invisible opacity-0']} {@attach revealWhenViewed}>
 <section {id} class={['px-[18px] sm:px-8', id && 'scroll-mt-[calc(var(--site-mobile-header-height)+18px)] lg:scroll-mt-12']}>
-  <ContentMeasure>
+  <ContentMeasure {maxWidth}>
     <h2 class="font-heading text-[25px] leading-[1.8] tracking-[0.2px] text-ink">
       {title}
     </h2>

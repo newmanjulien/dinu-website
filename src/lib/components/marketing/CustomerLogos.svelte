@@ -75,7 +75,7 @@
   ] as const;
 
   const logoSlots = $derived(
-    Array.from({ length: layout === 'demo' ? 8 : Math.max(0, Math.floor(count)) }, (_, index) => {
+    Array.from({ length: layout === 'demo' ? 12 : Math.max(0, Math.floor(count)) }, (_, index) => {
       const row = columns ? Math.floor(index / columns) : 0;
       const offset = row * 2;
 
@@ -91,10 +91,13 @@
 {#snippet logos()}
   <div
     class={[
-      'customer-logos relative z-[2] mx-auto w-full max-w-[880px] items-center gap-[clamp(26px,calc(2.3vw+5px),36px)] px-2',
-      columns !== undefined ? 'grid grid-cols-[repeat(var(--desktop-columns),minmax(0,1fr))] gap-y-2.5 max-md:grid-cols-[repeat(var(--mobile-columns),minmax(0,1fr))] max-md:gap-y-6' : 'flex',
-      align === 'center' ? 'justify-center justify-items-center' : 'justify-start justify-items-start',
-      layout === 'demo' ? 'lg:gap-[33px] max-lg:flex max-lg:justify-between max-lg:gap-[clamp(16px,2.5cqw,24px)] max-lg:max-w-none max-lg:px-0' : ['max-md:max-w-[420px] max-md:gap-[clamp(23px,calc(4.75vw+4px),31px)] max-md:px-0', className]
+      'customer-logos relative z-[2] mx-auto w-full items-center',
+      layout === 'demo' ? 'flex justify-between lg:gap-[33px] max-lg:gap-[clamp(16px,2.5cqw,24px)]' : [
+        'max-w-[880px] gap-[clamp(26px,calc(2.3vw+5px),36px)] px-2 max-md:max-w-[420px] max-md:gap-[clamp(23px,calc(4.75vw+4px),31px)] max-md:px-0',
+        columns !== undefined ? 'grid grid-cols-[repeat(var(--desktop-columns),minmax(0,1fr))] gap-y-2.5 max-md:grid-cols-[repeat(var(--mobile-columns),minmax(0,1fr))] max-md:gap-y-6' : 'flex',
+        align === 'center' ? 'justify-center justify-items-center' : 'justify-start justify-items-start',
+        className
+      ]
     ]}
     data-layout={layout}
     style={`--desktop-columns: ${columns ?? 1}; --mobile-columns: ${
@@ -111,6 +114,14 @@
           layout === 'default' && mobileCount !== undefined && index >= mobileCount && 'max-md:hidden',
           layout === 'default' && mobileCount !== undefined && index === mobileCount - 1 && 'max-md:[--tooltip-anchor:100%]',
           layout === 'demo' && [
+            index >= 8 && 'max-lg:hidden lg:@max-[897px]/customer-logos:hidden',
+            index === 7 && 'max-lg:[--tooltip-anchor:100%] lg:@max-[897px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 9 && 'lg:@max-[988px]/customer-logos:hidden',
+            index === 8 && 'lg:@max-[988px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 10 && 'lg:@max-[1107px]/customer-logos:hidden',
+            index === 9 && 'lg:@max-[1107px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 11 && 'lg:@max-[1197px]/customer-logos:hidden',
+            index === 10 && 'lg:@max-[1197px]/customer-logos:[--tooltip-anchor:100%]',
             index >= 4 && 'max-lg:@max-[440px]/customer-logos:hidden',
             index === 3 && 'max-lg:@max-[440px]/customer-logos:[--tooltip-anchor:100%]',
             index >= 5 && 'max-lg:@max-[560px]/customer-logos:hidden',
@@ -122,7 +133,7 @@
         style:--logo-index={index}
         style={`--logo-ratio: ${brand.width / brand.height}; --logo-height: ${brand.displayHeight};`}
       >
-        <span class={['block h-(--logo-height) aspect-(--logo-ratio) [transform:scale(0.9025)]', layout === 'demo' && 'max-lg:min-w-0 max-lg:h-auto max-lg:justify-self-stretch max-lg:transform-none']}>
+        <span class={['block h-(--logo-height) aspect-(--logo-ratio) [transform:scale(var(--logo-scale))]', layout === 'demo' && 'lg:h-[calc(var(--logo-height)*var(--logo-scale))] lg:transform-none max-lg:min-w-0 max-lg:h-auto max-lg:justify-self-stretch max-lg:transform-none']}>
           <img class="block h-full w-full object-contain" src={brand.src} alt="" width={brand.width} height={brand.height} />
         </span>
 
@@ -146,6 +157,10 @@
 
 <style>
   @layer components {
+    .customer-logos {
+      --logo-scale: 0.9025;
+    }
+
     /* The parent can supply --logos-enter-delay for the staggered entrance. */
     .logo-enter {
       opacity: 0;
@@ -167,7 +182,7 @@
       .customer-logos[data-layout='demo'] .logo-item {
         /* Flex shrink applies the same proportion to every reference width. */
         flex: 0 1
-          calc(var(--logo-height) * var(--logo-ratio) * 0.9025 * var(--demo-enlargement));
+          calc(var(--logo-height) * var(--logo-ratio) * var(--logo-scale) * var(--demo-enlargement));
       }
 
       @supports (height: calc(1px * (1px / 1px))) {

@@ -22,7 +22,6 @@
       rel="noopener noreferrer"
       variant="primary"
       size="xlarge"
-      shape="pill"
       class="mt-[33px]"
     >
       Start for free

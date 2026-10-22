@@ -69,8 +69,19 @@ are grouped before layout writes; animation frames use cached coordinates and
 known offsets. Contract rendering responds only to discrete scene changes.
 `GuidedCursor` and `GuidancePanel` are presentation components.
 
-Desktop feature frames crop around the clause and guidance; the hero keeps its
-wide workspace. The hero starts at the contract top with centered paper and no
+Frame and window resize notifications share a queued refresh. Unchanged frame
+dimensions, mobile mode, and pixel ratio skip preparation before pausing the
+clock, including notifications for a preparation already in progress. Font
+loading forces fresh measurements even when those inputs remain unchanged.
+
+Desktop feature frames center their camera around the clause and guidance.
+Scaling uses the original 700px interior width with a roughly 10% zoom, capped to fit
+narrower frames. Wider frames reveal additional workspace on both sides.
+The desktop stage stays 1440px wide; camera translation and scale reveal the
+surrounding canvas without resizing the workspace. Mobile stage width follows
+the frame. Stage height follows the camera to size guidance and scroll limits.
+The hero scales its full workspace proportionally with the wider frame and
+starts at the contract top with centered paper and no
 box. The paper shifts when the first box opens. Boxes stay open during travel
 and are replaced on the next clause click. Guidance attaches to its own clause
 inside the document viewport. Mobile preserves the 80px anchor offset and hides

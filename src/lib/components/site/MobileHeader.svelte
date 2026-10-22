@@ -15,28 +15,28 @@
   const activePath = $derived(page.url.pathname);
 </script>
 
-<header class="z-(--layer-chrome) sticky top-0 flex h-[var(--site-mobile-header-height)] w-full items-center justify-between bg-[var(--site-bg)] px-[20px] lg:hidden">
-  <a href="/" class="h-[30px] w-fit" aria-label="Home">
-    <img src="/logo.png" alt="" class="h-full w-auto" />
+<header class="z-(--layer-chrome) relative flex h-[var(--site-mobile-header-height)] w-full shrink-0 items-center justify-between bg-[var(--site-bg)] px-[20px] lg:hidden">
+  <a href="/" class="h-[27px] w-fit" aria-label="Dinu home">
+    <img src="/dinu-logo.png" alt="" width="307" height="95" class="h-full w-auto" />
   </a>
   <button
     type="button"
-    class="group -mr-[4px] inline-flex h-[38px] w-[38px] items-center justify-center text-ink"
+    class="group -mr-[4px] inline-flex h-[42px] w-[42px] items-center justify-center rounded-full border border-[#ededed] bg-[#fafafa] text-ink"
     aria-label={open ? 'Close menu' : 'Open menu'}
     aria-expanded={open}
     aria-controls="mobile-menu"
     onclick={() => (open = !open)}
   >
     <span class="relative block h-[26px] w-[26px]" aria-hidden="true">
-      <span class={[lineClasses, '-translate-y-1 group-aria-expanded:rotate-45']}></span>
-      <span class={[lineClasses, 'translate-y-1 group-aria-expanded:-rotate-45']}></span>
+      <span class={[lineClasses, '-translate-y-[3px] group-aria-expanded:rotate-45']}></span>
+      <span class={[lineClasses, 'translate-y-[3px] group-aria-expanded:-rotate-45']}></span>
     </span>
   </button>
 
   {#if open}
     <nav
       id="mobile-menu"
-      class="z-(--layer-chrome-popover) fixed bottom-0 left-0 right-0 top-[var(--site-mobile-header-height)] flex flex-col overflow-y-auto bg-[var(--site-bg)] pb-[28px]"
+      class="z-(--layer-chrome-popover) absolute left-0 right-0 top-full flex h-[calc(100dvh-var(--site-mobile-header-height))] flex-col overflow-y-auto bg-[var(--site-bg)] pb-[28px]"
       aria-label="Mobile primary"
       transition:slide={{ duration: reduceMotion.current ? 0 : 380, axis: 'y', easing: cubicOut }}
     >
@@ -49,7 +49,7 @@
       </div>
       <div class="mt-[30px] flex flex-col gap-[12px] border-t border-line px-[20px] pt-[24px]">
         <ButtonLink href={createPortalAuthUrl('login', activePath)} target="_blank" rel="noopener noreferrer" variant="soft" size="large" fullWidth>Log in</ButtonLink>
-        <ButtonLink href={createPortalAuthUrl('join', activePath)} target="_blank" rel="noopener noreferrer" variant="primary" size="large" fullWidth>Get started</ButtonLink>
+        <ButtonLink href={createPortalAuthUrl('join', activePath)} target="_blank" rel="noopener noreferrer" variant="primary" size="large" fullWidth>Start for free</ButtonLink>
       </div>
     </nav>
   {/if}

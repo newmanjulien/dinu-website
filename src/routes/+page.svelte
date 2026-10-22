@@ -19,7 +19,7 @@
 </script>
 
 <svelte:head>
-  <title>Keep contracts moving</title>
+  <title>Keep sales contracts moving</title>
   <meta name="description" content="Let sales reps handle contract negotiation" />
 </svelte:head>
 
@@ -36,21 +36,21 @@
       {/snippet}
     </ContentSection>
 
-    <ContentSection id="upload" title="No law degree required">
+    <ContentSection id="upload" title="No law degree required" maxWidth={988}>
       {#snippet body()}
         <p>Explain each clause in plain English, and guide reps through negotiations on the clauses buyers often push back on.</p>
       {/snippet}
       <SummaryWidget />
     </ContentSection>
 
-    <ContentSection id="accept" title="Negotiate with preapproved changes">
+    <ContentSection id="accept" title="Negotiate with preapproved changes" maxWidth={988}>
       {#snippet body()}
         <p>Reps apply standard concessions directly to the contract and escalate anything outside those limits.</p>
       {/snippet}
       <AcceptChangesWidget />
     </ContentSection>
 
-    <ContentSection id="respond" title="Skip the back-and-forth">
+    <ContentSection id="respond" title="Skip the back-and-forth" maxWidth={988}>
       {#snippet body()}
         <p>When a change needs sign-off, reps ask the right person on your team for approval with one click.</p>
       {/snippet}
