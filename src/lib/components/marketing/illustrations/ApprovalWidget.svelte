@@ -38,21 +38,19 @@
 		position: relative;
 	}
 	.corner-dinosaur {
+		display: none;
 		position: absolute;
 		top: 0;
 		right: 0;
 		z-index: 1;
-		width: 50.4px;
+		width: 69.4925px;
 		height: auto;
 		transform: translate(34%, -47%);
 		pointer-events: none;
 		user-select: none;
 	}
-	@media (min-width: 40rem) {
-		.corner-dinosaur { width: 67.2px; }
-	}
 	@media (min-width: 64rem) {
-		.corner-dinosaur { width: 77px; }
+		.corner-dinosaur { display: block; }
 	}
 	table { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 12px; font-size: 12px; line-height: 1.4; color: var(--color-ink-muted); }
 	th, td { border: 1px solid var(--color-line-mid); padding: 8px; text-align: left; overflow-wrap: anywhere; }

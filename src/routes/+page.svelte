@@ -111,10 +111,11 @@
   }
 
   .edge-dinosaur {
+    display: none;
     position: absolute;
-    top: calc(100% + var(--section-gap) / 2);
+    top: calc(100% + var(--section-gap) / 2 - 10px);
     right: 0;
-    width: 75.6px;
+    width: 106.43724px;
     height: auto;
     transform: translateY(-50%);
     pointer-events: none;
@@ -125,15 +126,11 @@
     .homepage-content {
       --section-gap: 190px;
     }
-
-    .edge-dinosaur {
-      width: 99.792px;
-    }
   }
 
   @media (min-width: 64rem) {
     .edge-dinosaur {
-      width: 117.936px;
+      display: block;
     }
   }
 </style>

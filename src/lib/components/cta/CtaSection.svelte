@@ -56,24 +56,19 @@
   }
 
   .cta-dinosaur {
+    display: none;
     position: absolute;
     bottom: 100%;
     right: clamp(18px, 3vw, 44px);
-    width: 77px;
+    width: 129.96px;
     height: auto;
     pointer-events: none;
     user-select: none;
   }
 
-  @media (min-width: 40rem) {
-    .cta-dinosaur {
-      width: 113px;
-    }
-  }
-
   @media (min-width: 64rem) {
     .cta-dinosaur {
-      width: 144px;
+      display: block;
     }
   }
 </style>
