@@ -113,9 +113,10 @@
   .edge-dinosaur {
     display: none;
     position: absolute;
+    /* Center in the section gap, lifted 10px for visual alignment. */
     top: calc(100% + var(--section-gap) / 2 - 10px);
     right: 0;
-    width: 106.43724px;
+    width: 106.4px;
     height: auto;
     transform: translateY(-50%);
     pointer-events: none;

@@ -43,8 +43,9 @@
 		top: 0;
 		right: 0;
 		z-index: 1;
-		width: 69.4925px;
+		width: 69.5px;
 		height: auto;
+		/* Scale the overlap with the drawing so it stays perched on the card's corner. */
 		transform: translate(34%, -47%);
 		pointer-events: none;
 		user-select: none;

@@ -59,8 +59,8 @@
     display: none;
     position: absolute;
     bottom: 100%;
-    right: clamp(18px, 3vw, 44px);
-    width: 129.96px;
+    right: clamp(16px, calc(3vw - 2px), 42px);
+    width: 123.5px;
     height: auto;
     pointer-events: none;
     user-select: none;
