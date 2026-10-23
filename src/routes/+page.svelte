@@ -44,13 +44,23 @@
 <main>
   <Hero id={overview.id} />
 
-  <div class="homepage-content flex flex-col gap-[150px] sm:gap-[190px]">
-    <ContentSection id={sections.intro.id} title={sections.intro.title}>
-      {#snippet body()}
-        <p>When a buyer sends back a redlined contract, your reps are stuck waiting on legal. Deals that should be closing get caught in a slow and expensive review process.</p>
-        <p>Give reps the guardrails to safely handle more of the contract process themselves and keep deals moving quickly toward signature.</p>
-      {/snippet}
-    </ContentSection>
+  <div class="homepage-content flex flex-col">
+    <div class="intro-section">
+      <ContentSection id={sections.intro.id} title={sections.intro.title}>
+        {#snippet body()}
+          <p>When a buyer sends back a redlined contract, your reps are stuck waiting on legal. Deals that should be closing get caught in a slow and expensive review process.</p>
+          <p>Give reps the guardrails to safely handle more of the contract process themselves and keep deals moving quickly toward signature.</p>
+        {/snippet}
+      </ContentSection>
+      <img
+        src="/denu-dinosaur-edge.svg"
+        alt=""
+        aria-hidden="true"
+        width="240"
+        height="290"
+        class="edge-dinosaur"
+      />
+    </div>
 
     <ContentSection id={sections.upload.id} title={sections.upload.title}>
       {#snippet body()}
@@ -89,3 +99,41 @@
   </div>
   <CtaSection id={CTA_SECTION_ID} />
 </main>
+
+<style>
+  .homepage-content {
+    --section-gap: 150px;
+    gap: var(--section-gap);
+  }
+
+  .intro-section {
+    position: relative;
+  }
+
+  .edge-dinosaur {
+    position: absolute;
+    top: calc(100% + var(--section-gap) / 2);
+    right: 0;
+    width: 75.6px;
+    height: auto;
+    transform: translateY(-50%);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (min-width: 40rem) {
+    .homepage-content {
+      --section-gap: 190px;
+    }
+
+    .edge-dinosaur {
+      width: 99.792px;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .edge-dinosaur {
+      width: 117.936px;
+    }
+  }
+</style>

@@ -8,6 +8,14 @@
 </script>
 
 <section {id} class="brand-cta bg-brand-dark px-[18px] py-[72px] text-white sm:px-8 sm:py-[90px]">
+  <img
+    src="/denu-dinosaur.svg"
+    alt=""
+    aria-hidden="true"
+    width="210"
+    height="200"
+    class="cta-dinosaur"
+  />
   <ContentMeasure maxWidth="var(--site-footer-content-width)" class="flex flex-col items-center gap-[33px] text-center md:flex-row md:justify-between md:gap-8 md:text-left">
     <div>
       <h2 class="font-heading text-[26px] leading-[1.08] sm:text-[38px] sm:leading-[1.06]">
@@ -41,3 +49,31 @@
     </div>
   </ContentMeasure>
 </section>
+
+<style>
+  .brand-cta {
+    position: relative;
+  }
+
+  .cta-dinosaur {
+    position: absolute;
+    bottom: 100%;
+    right: clamp(18px, 3vw, 44px);
+    width: 77px;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (min-width: 40rem) {
+    .cta-dinosaur {
+      width: 113px;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .cta-dinosaur {
+      width: 144px;
+    }
+  }
+</style>
