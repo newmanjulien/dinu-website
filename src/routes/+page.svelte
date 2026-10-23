@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-  <title>Denu keeps contracts moving</title>
+  <title>Dinu keeps contracts moving</title>
   <meta name="description" content="Let sales reps handle contract negotiation" />
 </svelte:head>
 
@@ -53,7 +53,7 @@
         {/snippet}
       </ContentSection>
       <img
-        src="/denu-dinosaur-edge.svg"
+        src="/dinu-dinosaur-edge.svg"
         alt=""
         aria-hidden="true"
         width="240"

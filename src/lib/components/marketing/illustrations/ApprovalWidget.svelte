@@ -5,7 +5,7 @@
 
 <div class="approval-widget">
 	<img
-		src="/denu-dinosaur-corner.svg"
+		src="/dinu-dinosaur-corner.svg"
 		alt=""
 		aria-hidden="true"
 		width="130"

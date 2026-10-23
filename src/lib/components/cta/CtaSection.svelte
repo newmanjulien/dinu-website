@@ -9,7 +9,7 @@
 
 <section {id} class="brand-cta bg-brand-dark px-[18px] py-[72px] text-white sm:px-8 sm:py-[90px]">
   <img
-    src="/denu-dinosaur.svg"
+    src="/dinu-dinosaur.svg"
     alt=""
     aria-hidden="true"
     width="210"
