@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-  <title>Keep contracts moving</title>
+  <title>Denu keeps contracts moving</title>
   <meta name="description" content="Let sales reps handle contract negotiation" />
 </svelte:head>
 
