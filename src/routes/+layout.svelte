@@ -1,5 +1,6 @@
 <script lang="ts">
   import '$lib/styles/marketing.css';
+  import { CTA_SECTION_ID } from '$lib/data/homepage';
   import type { LayoutProps } from './$types';
   import BookingWidget from '$lib/components/site/BookingWidget.svelte';
   import DesktopHeader from '$lib/components/site/DesktopHeader.svelte';
@@ -27,7 +28,7 @@
   <BookingWidget
     bind:widget={bookingWidget}
     visible={!isHomepage || frameRevealed}
-    brandSectionId={isHomepage ? 'cta' : undefined}
+    brandSectionId={isHomepage ? CTA_SECTION_ID : undefined}
   />
 
   <div class="site-page flex-1">

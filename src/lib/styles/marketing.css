@@ -18,18 +18,11 @@
   --color-ink-muted: #666666;
   --color-ink: #202124;
   --color-accent: #2563eb;
-  --color-selection-highlight: #b7d0fa;
   --color-danger: #b3261e;
   --color-success: #22c55e;
   --color-brand: #ff4f45;
   --color-brand-dark: #7e201d;
-  /* Tokens used by the embedded Oceans UI; values are scoped to its root. */
-  --color-ink-secondary: var(--color-ink);
   --color-control-fill: var(--color-hover);
-  --color-fill-subtle: var(--color-hover);
-  --color-accent-hover: var(--color-accent);
-  --color-danger-surface: #fff1f0;
-  --color-danger-surface-hover: #ffe4e1;
   --radius-base: 14px;
 }
 
@@ -40,7 +33,7 @@
     sans-serif;
   --site-font-heading: "Newsreader", "Newsreader Fallback", serif;
   --site-mobile-header-height: 50px;
-  --site-footer-content-width: 1086.8px;
+  --site-footer-content-width: 1100px;
   --site-footer-padding: 2rem;
   --layer-chrome: 30;
   --layer-chrome-popover: 40;
@@ -83,18 +76,20 @@ body {
   }
 
   .homepage-content {
-    padding-block: 150px;
+    padding-block: 150px 174px;
   }
 
   @media (min-width: 40rem) {
     .homepage-content {
-      padding-block: 190px;
+      padding-block: 190px 214px;
     }
   }
 
   @media (min-width: 64rem) {
     .homepage-shell {
-      --site-floating-bottom-clearance: calc(var(--homepage-rail-width) + var(--site-footer-padding));
+      --site-floating-bottom-clearance: calc(
+        var(--homepage-rail-width) + var(--site-footer-padding)
+      );
       padding-bottom: var(--homepage-rail-width);
     }
 
@@ -105,11 +100,17 @@ body {
 
     .homepage-hero .hero-customer-logos {
       /* Subtract the existing centered gutter; only logos reserve space for the right rail. */
-      padding-right: max(0px, calc(var(--homepage-rail-width) + 2rem - (100vw - 100%) / 2));
+      padding-right: max(
+        0px,
+        calc(var(--homepage-rail-width) + 2rem - (100vw - 100%) / 2)
+      );
     }
 
     .homepage-content {
-      --inner-bend-radius: max(calc(48px - var(--homepage-band-width) / 2), calc(var(--homepage-band-width) * 2));
+      --inner-bend-radius: max(
+        calc(48px - var(--homepage-band-width) / 2),
+        calc(var(--homepage-band-width) * 2)
+      );
       margin-top: calc(var(--homepage-band-width) / -2);
       margin-left: var(--homepage-rail-width);
       padding-top: calc(190px + var(--homepage-band-width) / 2);

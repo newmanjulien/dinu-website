@@ -1,5 +1,6 @@
 import { tick } from 'svelte';
-import { motionTiming, type AnimationState, type AnimationStep, type AnimationTarget, type PreparedContract } from './model';
+import type { CursorFrame } from '../animation/tour-model';
+import { motionTiming, type AnimationState, type AnimationStep, type AnimationTarget, type ContractStateId, type PreparedContract } from './model';
 
 const clamp = (value: number, maximum: number) => Math.max(0, Math.min(Math.max(0, maximum), value));
 const progress = (elapsed: number, duration = 0) => duration ? Math.min(1, elapsed / duration) : 1;
@@ -23,10 +24,6 @@ const ease = bezier(.25, .1, .25, 1);
 const cssEaseOut = bezier(0, 0, .58, 1);
 const easeInOut = bezier(.42, 0, .58, 1);
 const mix = (from: number, to: number, amount: number) => from + (to - from) * amount;
-// Use the 700px interior of the original 702px frame as the feature zoom baseline.
-const featureReferenceWidth = 700;
-const featureZoom = 1.05 * 1.05;
-export interface CursorFrame { x: number; y: number; opacity: number; ringOpacity: number; ringScale: number; scale: number }
 interface Elements { frame: HTMLElement; stage: HTMLElement; viewport: HTMLElement; column: HTMLElement; rail: HTMLElement }
 interface FrameInputs { width: number; height: number; mobile: boolean; pixelRatio: number }
 interface Bounds { left: number; right: number; top: number; bottom: number }
@@ -39,31 +36,12 @@ interface MotionValues { scroll: number; panelScroll: number; paper: number; opa
 interface Values extends MotionValues { cursor: CursorFrame }
 const emptyCursor = (): CursorFrame => ({ x: 0, y: 0, opacity: 0, ringOpacity: 0, ringScale: .45, scale: 1 });
 
-export function validateTour(tour: readonly AnimationStep[], contract: PreparedContract) {
-	const panels = new Map(contract.panels.map((panel) => [panel.id, panel]));
-	for (const beat of tour) {
-		const fail = (message: string): never => { throw new Error(`Animation beat ${beat.phase}: ${message}`); };
-		if (!contract.states[beat.state.contract]) fail('unknown contract state');
-		if (!panels.has(beat.state.clause)) fail('unknown viewed clause');
-		if (beat.state.box) {
-			const panel = panels.get(beat.state.box.clause) ?? fail('unknown guidance box');
-			if (beat.state.box.section && !panel.sections.some((section) => section.key === beat.state.box!.section)) fail('unknown open section');
-		}
-		const target = beat.cursor?.target;
-		if (!target || target.kind === 'origin' || target.kind === 'approval') continue;
-		const panel = panels.get(target.clause) ?? fail('unknown cursor clause');
-		if (target.kind === 'clause') continue;
-		if (target.clause !== beat.state.box?.clause) fail('cursor targets a closed guidance box');
-		if (target.kind === 'section' && !panel.sections.some((section) => section.key === target.section)) fail('unknown cursor section');
-		if (target.kind === 'concession' && !panel.sections.some((section) => section.key === beat.state.box?.section && section.concessions?.some((concession) => concession.id === target.concession))) fail('unknown or closed concession target');
-	}
-}
-
-/** Sole owner of DOM measurement and geometry. Frame updates use cached coordinates. */
-export function createSceneGeometry(elements: Elements, contract: PreparedContract, framing: 'hero' | 'feature', playback: {
+/** Coordinates document pagination and scene measurement. Frames use cached coordinates. */
+export function createSceneGeometry(elements: Elements, contract: PreparedContract, playback: {
 	readonly step: AnimationStep; readonly resumeStep: AnimationStep; readonly elapsed: number; readonly reducedMotion: boolean;
 	setReady(ready: boolean): void; setMotionEnd(end: number): void;
-}, render: (mobile: boolean, cursor: CursorFrame) => void) {
+}, render: (mobile: boolean, cursor: CursorFrame) => void,
+paginate: (state: ContractStateId, fontVersion: number) => Promise<boolean>) {
 	const { frame, stage, viewport, column, rail } = elements;
 	let prepared: AnimationStep | undefined;
 	let preparedReduced = false;
@@ -75,13 +53,15 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 	let width = 1440;
 	let panelVisible = false;
 	let target: TargetPoint | undefined;
-	let values: Values = { scroll: 0, panelScroll: 0, paper: framing === 'hero' ? 232 : 0, opacity: 1, cursor: emptyCursor() };
+	let values: Values = { scroll: 0, panelScroll: 0, paper: 232, opacity: 1, cursor: emptyCursor() };
 	const capture = (): MotionValues => ({ scroll: values.scroll, panelScroll: values.panelScroll, paper: values.paper, opacity: values.opacity });
 	let from = capture();
 	let to = { scroll: 0, panelScroll: 0, paper: values.paper, opacity: 1 };
 	let cursorFrom = { x: 0, y: 0 };
 	let cursorOpacityFrom = 0;
 	let panel: HTMLElement | null = null;
+	let viewportScroll: number | undefined;
+	let panelScroll: number | undefined;
 	let guidanceEntrance = false;
 	let measurements: SceneMeasurements | undefined;
 	let measurementKey = '';
@@ -91,8 +71,17 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 	let destroyed = false;
 	let queued = false;
 	let fontsChanged = false;
+	let fontVersion = 0;
 	let preparationInputs: FrameInputs | undefined;
 	let saved: { step: AnimationStep; from: MotionValues; cursorFrom: { x: number; y: number }; cursorOpacityFrom: number; cursorFromTarget?: AnimationTarget; fromScene?: AnimationState } | undefined;
+
+	function style(node: HTMLElement, property: 'transform' | 'opacity' | 'visibility' | 'width' | 'height' | 'top', value: string) {
+		if (node.style[property] !== value) node.style[property] = value;
+	}
+	function scroll(documentScroll: number, guidanceScroll: number) {
+		if (viewportScroll !== documentScroll) { viewport.scrollTop = documentScroll; viewportScroll = documentScroll; }
+		if (panel && panelScroll !== guidanceScroll) { panel.scrollTop = guidanceScroll; panelScroll = guidanceScroll; }
+	}
 
 	function point(point: TargetPoint, offsets: MotionValues = values) {
 		if (point.attachment === 'origin') return { x: mobile ? width * .65 : 650, y: mobile ? height * .75 : Math.min(height * .7, 600) };
@@ -109,13 +98,12 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 		values.opacity = mix(from.opacity, to.opacity, ease(progress(at, cues.opacity)));
 		const entrance = guidanceEntrance ? cssEaseOut(progress(at, cues.guidance)) : 1;
 		const entranceOffset = 4 * (1 - entrance);
-		viewport.scrollTop = values.scroll;
-		if (panel) panel.scrollTop = values.panelScroll;
-		column.style.transform = `translateX(${values.paper}px)`;
-		stage.style.opacity = String(values.opacity);
-		rail.style.visibility = panelVisible ? 'visible' : 'hidden';
-		rail.style.opacity = String(panelVisible ? entrance : 0);
-		rail.style.transform = `translateY(${entranceOffset}px)`;
+		scroll(values.scroll, values.panelScroll);
+		style(column, 'transform', `translateX(${values.paper}px)`);
+		style(stage, 'opacity', String(values.opacity));
+		style(rail, 'visibility', panelVisible ? 'visible' : 'hidden');
+		style(rail, 'opacity', String(panelVisible ? entrance : 0));
+		style(rail, 'transform', `translateY(${entranceOffset}px)`);
 		if (target && beat.cursor && !reduced) {
 			const destination = point(target);
 			if (target.attachment === 'panel' || target.attachment === 'panel-frame') destination.y += entranceOffset;
@@ -132,6 +120,8 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 	}
 
 	function measureScene(): SceneMeasurements {
+		// Content updates can clamp scroll positions or replace the guidance node.
+		viewportScroll = panelScroll = undefined;
 		const stageBounds = stage.getBoundingClientRect();
 		const scroll = viewport.scrollTop;
 		const local = (element: Element, firstLine = false): Bounds => {
@@ -145,7 +135,7 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 		};
 		const center = (bounds: Bounds, attachment: TargetPoint['attachment']): TargetPoint => ({ x: (bounds.left + bounds.right) / 2, y: (bounds.top + bounds.bottom) / 2, attachment });
 		const highlights = new Map<string, HTMLElement>(), revisionNodes = new Map<string, HTMLElement>();
-		for (const node of stage.querySelectorAll<HTMLElement>('[data-highlight]')) {
+		for (const node of column.querySelectorAll<HTMLElement>('.contract-paper [data-highlight]')) {
 			const id = node.dataset.highlight!;
 			if (!highlights.has(id)) highlights.set(id, node);
 			if (!revisionNodes.has(id) && (node.classList.contains('added') || node.classList.contains('removed'))) revisionNodes.set(id, node);
@@ -163,6 +153,7 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 		panel = stage.querySelector<HTMLElement>('[data-guidance-panel]');
 		if (panel) {
 			const bounds = local(panel), scroll = panel.scrollTop;
+			targets.set('panel', center(bounds, 'panel-frame'));
 			const contentBounds = (node: Element, firstLine = false): Bounds => {
 				const box = local(node, firstLine);
 				return { left: box.left - bounds.left, right: box.right - bounds.left, top: box.top - bounds.top + scroll, bottom: box.bottom - bounds.top + scroll };
@@ -170,7 +161,7 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 			const add = (key: string, node: Element) => {
 				panelBounds.set(key, contentBounds(node));
 				const position = center(contentBounds(node, true), 'panel');
-				targets.set(key, { ...position, x: position.x + (mobile ? 24 : 920) });
+				targets.set(key, { ...position, x: position.x + bounds.left });
 			};
 			for (const node of panel.querySelectorAll<HTMLElement>('[data-section], [data-concession-id]')) add(node.dataset.section ? `section:${node.dataset.section}` : `concession:${node.dataset.concessionId}`, node);
 			for (const node of panel.querySelectorAll<HTMLElement>('[data-section-body]')) panelBounds.set(`body:${node.dataset.sectionBody}`, contentBounds(node));
@@ -219,38 +210,34 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 		// Record in-flight inputs so overlapping resize notifications can skip this preparation.
 		preparationInputs = inputs;
 		const stageWidth = `${mobile ? frameWidth : 1440}px`;
-		if (stage.style.width !== stageWidth) stage.style.width = stageWidth;
+		style(stage, 'width', stageWidth);
 		render(mobile, values.cursor);
 		await tick(); // Apply mobile paper widths before collecting any geometry.
 		if (destroyed || revision !== version) return;
+		const documentLayoutChanged = await paginate(beat.state.contract, fontVersion);
+		if (destroyed || revision !== version) return;
 		const key = `${beat.state.contract}:${beat.state.box?.clause ?? beat.state.clause}:${beat.state.box?.section ?? ''}:${frameWidth}:${frameHeight}:${mobile}`;
-		if (!measurements || resize || key !== measurementKey) {
+		if (!measurements || resize || documentLayoutChanged || key !== measurementKey) {
 			measurements = measureScene();
 			measurementKey = key;
 		}
 		const { clauses, revisions, actions: actionBounds } = measurements;
-		const viewedBounds = (beat.state.viewport === 'revision' ? revisions.get(beat.state.clause) : undefined) ?? clauses.get(beat.state.clause);
 		const nextPanelTop = beat.state.box ? Math.max(0, clauses.get(beat.state.box.clause)?.top ?? 24) : 24;
 		const resolve = (wanted: AnimationTarget): TargetPoint | undefined => {
 			if (wanted.kind === 'origin') return { attachment: 'origin', x: 0, y: 0 };
-			if (wanted.kind === 'panel') return { attachment: 'panel-frame', x: mobile ? frameWidth / 2 : 1140,
-				y: nextPanelTop + (mobile ? 80 : 0) + Math.min(measurements!.panelHeight, height - (mobile ? 140 : 48)) / 2 };
+			if (wanted.kind === 'panel') {
+				const position = measurements!.targets.get('panel');
+				return position ? { ...position,
+					y: nextPanelTop + (mobile ? 80 : 0) + Math.min(measurements!.panelHeight, height - (mobile ? 140 : 48)) / 2 } : undefined;
+			}
 			const key = wanted.kind === 'section' ? `section:${wanted.section}` : wanted.kind === 'concession' ? `concession:${wanted.concession}` : wanted.kind === 'clause' ? `clause:${wanted.clause}` : wanted.kind;
 			const destination = measurements!.targets.get(key);
 			return destination?.attachment === 'panel' ? { ...destination, y: destination.y + nextPanelTop + (mobile ? 80 : 0) } : destination;
 		};
 		const cursorTarget = beat.cursor?.target;
-		let cropX = 0, cropWidth = mobile ? frameWidth : 1440;
-		if (!mobile && framing === 'feature') {
-			if (beat.state.viewport === 'actions') { cropWidth = (actionBounds.right - actionBounds.left + 48) / .729; cropX = (actionBounds.left + actionBounds.right - cropWidth) / 2; }
-			else if (viewedBounds) { cropX = Math.min(viewedBounds.left, 920) - 24; cropWidth = Math.max(viewedBounds.right, 1360) - cropX + 24; }
-		}
 		width = frameWidth;
-		scale = mobile ? 1 : (framing === 'feature' ? Math.min(frameWidth, featureReferenceWidth * featureZoom) : frameWidth) / cropWidth;
+		scale = mobile ? 1 : frameWidth / 1440;
 		height = frameHeight / scale;
-		const visibleWidth = frameWidth / scale;
-		// Keep the feature camera centered as its frame widens or zoom changes.
-		if (!mobile && framing === 'feature') cropX -= (visibleWidth - cropWidth) / 2;
 		target = cursorTarget ? resolve(cursorTarget) : undefined;
 		panelVisible = Boolean(beat.state.box) && !(mobile && beat.state.viewport === 'revision');
 		guidanceEntrance = Boolean(beat.motion?.guidance);
@@ -275,26 +262,26 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 			const bounds = (scene.viewport === 'revision' ? revisions.get(scene.clause) : undefined) ?? clauses.get(scene.clause);
 			return scene.viewport === 'top' ? 0 : scene.viewport === 'actions' ? actionBounds.bottom - height + 24 : bounds ? bounds.top - 24 : values.scroll;
 		};
-		if ((resize || restoring) && fromScene) {
+		if ((resize || restoring || documentLayoutChanged) && fromScene) {
 			from.scroll = beat.motion?.document ? sceneScroll(fromScene) : sceneScroll(beat.state);
-			if (beat.motion?.paper) from.paper = framing === 'hero' && !mobile && !fromScene.box ? 232 : 0;
+			if (beat.motion?.paper) from.paper = !mobile && !fromScene.box ? 232 : 0;
 		}
 		to = {
 			scroll: sceneScroll(beat.state),
-			panelScroll, paper: framing === 'hero' && !mobile && !panelVisible ? 232 : 0, opacity: beat.state.opacity ?? 1
+			panelScroll, paper: !mobile && !panelVisible ? 232 : 0, opacity: beat.state.opacity ?? 1
 		};
-		// Every read above precedes these layout writes; frames below perform no DOM reads.
-		stage.style.height = `${height}px`;
-		stage.style.setProperty('--stage-height', `${height}px`);
-		stage.style.transform = `translateX(${-cropX * scale}px) scale(${scale})`;
-		rail.style.top = `${nextPanelTop + (mobile ? 80 : 0)}px`;
+		// Every read above precedes these layout writes; frames below perform no layout reads.
+		style(stage, 'height', `${height}px`);
+		if (stage.style.getPropertyValue('--stage-height') !== `${height}px`) stage.style.setProperty('--stage-height', `${height}px`);
+		style(stage, 'transform', `scale(${scale})`);
+		style(rail, 'top', `${nextPanelTop + (mobile ? 80 : 0)}px`);
 		await tick();
 		if (destroyed || revision !== version) return;
 		const maxScroll = viewport.scrollHeight - viewport.clientHeight;
 		to.scroll = clamp(to.scroll, maxScroll);
 		to.panelScroll = clamp(to.panelScroll, panel ? panel.scrollHeight - panel.clientHeight : 0);
 		from.scroll = clamp(from.scroll, maxScroll);
-		if ((resize || restoring) && cursorFromTarget) { const start = resolve(cursorFromTarget); if (start) cursorFrom = point(start, from); }
+		if ((resize || restoring || documentLayoutChanged) && cursorFromTarget) { const start = resolve(cursorFromTarget); if (start) cursorFrom = point(start, from); }
 		if (!prepared || reduced) { from = { ...to }; cursorOpacityFrom = 0; }
 		if (cursorTarget?.kind === 'origin' && (!prepared?.cursor || !values.cursor.opacity)) cursorFrom = point(target!);
 		const cues = beat.motion ?? {};
@@ -326,7 +313,7 @@ export function createSceneGeometry(elements: Elements, contract: PreparedContra
 			void prepare(playback.step, playback.reducedMotion, true);
 		});
 	}
-	function fontsLoaded() { fontsChanged = true; remeasure(); }
+	function fontsLoaded() { fontVersion++; fontsChanged = true; remeasure(); }
 	const observer = new ResizeObserver(remeasure);
 	observer.observe(frame);
 	window.addEventListener('resize', remeasure);

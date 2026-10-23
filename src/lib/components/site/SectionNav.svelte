@@ -18,8 +18,6 @@
 
   let activeId = $state('');
   let visible = $state(false);
-  let fullyClipped = $state(false);
-  let clipBottom = $state(0);
   let navEl = $state<HTMLElement | null>(null);
   let listEl = $state<HTMLUListElement | null>(null);
   let hoverY = $state<number | null>(null);
@@ -99,12 +97,12 @@
         const scrollY = window.scrollY;
         const first = bounds.find((item) => item.id === items[0]?.id);
         const last = bounds.find((item) => item.id === items.at(-1)?.id);
-        const overlap = coverTop === null ? 0 : Math.max(0, Math.ceil(navBottom - coverTop + scrollY));
-        clipBottom = overlap;
-        fullyClipped = navBottom > navTop && overlap >= navBottom - navTop;
-        // Every tick must be below the hero bend, on the straight rail.
-        const pastStart = Boolean(first && first.bottom - scrollY + 40 < navTop);
-        const pastEnd = coverTop === null && Boolean(last && last.bottom - scrollY <= viewportHeight / 2);
+        // Leave space below the hero bend before fading in.
+        const pastStart = Boolean(first && first.bottom - scrollY + 64 < navTop);
+        // Fade out before the lower bend reaches the ticks.
+        const pastEnd = coverTop === null
+          ? Boolean(last && last.bottom - scrollY <= viewportHeight / 2)
+          : coverTop - scrollY <= navBottom + 96;
         visible = pastStart && !pastEnd;
 
         const probe = scrollY + Math.round(viewportHeight * 0.6);
@@ -197,12 +195,10 @@
   bind:this={navEl}
   class={[
     'z-(--layer-chrome) pointer-events-none fixed left-[calc(var(--homepage-band-width)*3.5-20px)] top-1/2 hidden -translate-y-1/2 transition-opacity duration-[180ms] ease-[ease] motion-reduce:transition-none lg:block',
-    visible ? 'opacity-100' : 'opacity-0',
-    clipBottom > 0 && '[clip-path:inset(-20px_-100vw_var(--nav-clip-bottom)_-4px)]'
+    visible ? 'opacity-100' : 'opacity-0'
   ]}
-  style={clipBottom > 0 ? `--nav-clip-bottom: ${clipBottom}px` : undefined}
   aria-label="On this page"
-  inert={!visible || fullyClipped}
+  inert={!visible}
 >
   <ul
     bind:this={listEl}

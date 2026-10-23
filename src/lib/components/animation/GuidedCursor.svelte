@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CursorFrame } from './scene-geometry';
+	import type { CursorFrame } from './tour-model';
 	let { cursor }: { cursor: CursorFrame } = $props();
 </script>
 

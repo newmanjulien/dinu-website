@@ -1,4 +1,4 @@
-import { defineTour, cursorMoveDuration, type AnimationState, type AnimationStep, type AnimationTarget } from './model.ts';
+import { defineTour, cursorMoveDuration, motionTiming, type AnimationState, type AnimationStep, type AnimationTarget } from './model.ts';
 
 const steps: AnimationStep[] = [];
 let state: AnimationState = { clause: 'demo:resale', contract: 'baseline', viewport: 'top' };
@@ -7,14 +7,14 @@ function hold(phase: string, duration: number, target: AnimationTarget | null = 
 }
 function click(name: string, target: AnimationTarget) {
 	hold(`${name}-approach`, cursorMoveDuration, target, 'idle', cursorMoveDuration);
-	hold(`${name}-click`, 220, target, 'clicking');
+	hold(`${name}-click`, motionTiming.click, target, 'clicking');
 }
-function openBox(name: string, summaryDuration: number, enterDuration = 120) {
+function openBox(name: string, summaryDuration: number, enterDuration: number = motionTiming.cursorFade) {
 	hold(`${name}-enter`, enterDuration, { kind: 'origin' });
 	hold(`${name}-approach`, cursorMoveDuration, { kind: 'clause', clause: state.clause }, 'idle', cursorMoveDuration);
 	state = { ...state, hovered: true };
 	hold(`${name}-hover`, 220, { kind: 'clause', clause: state.clause });
-	hold(`${name}-click`, 220, { kind: 'clause', clause: state.clause }, 'clicking');
+	hold(`${name}-click`, motionTiming.click, { kind: 'clause', clause: state.clause }, 'clicking');
 	state = { ...state, box: { clause: state.clause, section: null, scroll: 'start' }, hovered: false };
 	hold(`${name}-summary`, summaryDuration, { kind: 'clause', clause: state.clause });
 }
@@ -69,11 +69,11 @@ click('approval', { kind: 'approval' });
 hold('approval-clicked', 350, { kind: 'approval' });
 hold('completed', 4000);
 state = { ...state, opacity: 0 };
-hold('fade-out', 250);
+hold('fade-out', motionTiming.loopFade);
 state = { clause: 'demo:resale', contract: 'baseline', viewport: 'top', opacity: 0 };
 steps.push({ phase: 'reset-hidden', duration: 1, state: { ...state }, cursor: null, motion: { document: 0, paper: 0, opacity: 0 } });
 state = { ...state, opacity: 1 };
-hold('fade-in', 250);
+hold('fade-in', motionTiming.loopFade);
 
 export const heroTour: ReadonlyArray<AnimationStep> = defineTour(steps);
 // The loop ends on the baseline, but reduced motion shows the completed contract.

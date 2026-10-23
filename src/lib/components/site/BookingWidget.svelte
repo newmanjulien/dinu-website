@@ -14,7 +14,7 @@
     widget?: HTMLDivElement;
   } = $props();
 
-  const DISMISSAL_KEY = 'agreed:book-demo-dismissed';
+  const DISMISSAL_KEY = 'dinu:book-demo-dismissed';
   const desktop = new MediaQuery(DESKTOP_QUERY);
   let expanded = $state<boolean | null>(null);
   let trigger = $state<HTMLButtonElement>();
@@ -44,25 +44,36 @@
 
     void tick().then(() => {
       if (disposed) return;
-      const section = document.getElementById(sectionId);
       const shell = element.closest('.site-shell');
-      if (!section || !shell) {
+      if (!shell) {
         brandOverlap = 0;
         return;
       }
 
+      let section: Element | null = null;
+      const resolveElements = () => {
+        section = shell.querySelector(`#${CSS.escape(sectionId)}`);
+        const flow = shell.querySelectorAll('.site-page, .homepage-hero, .homepage-content, #site-footer');
+        return [shell, element, ...flow, ...(section ? [section] : [])];
+      };
+
       const measure = () => {
+        if (!element.isConnected || !shell.contains(element)
+          || !section?.isConnected || !shell.contains(section)) {
+          brandOverlap = 0;
+          return;
+        }
         const rect = element.getBoundingClientRect();
-        const boundary = section.getBoundingClientRect().top;
-        brandOverlap = rect.height
-          ? Math.max(0, Math.min(100, (rect.bottom - boundary) / rect.height * 100))
+        const sectionRect = section.getBoundingClientRect();
+        brandOverlap = rect.height > 0 && sectionRect.height > 0
+          ? Math.max(0, Math.min(100, (rect.bottom - sectionRect.top) / rect.height * 100))
           : 0;
       };
 
       // Sample the new view before paint; subsequent layout and scroll reads are batched.
+      resolveElements();
       measure();
-      const flow = shell.querySelectorAll('.site-page, .homepage-hero, .homepage-content, #site-footer');
-      layout = observeLayout([shell, section, element, ...flow], measure);
+      layout = observeLayout(resolveElements, measure, undefined, { mutationRoot: shell });
       window.addEventListener('scroll', onScroll, { passive: true });
     });
 
@@ -178,7 +189,7 @@
   .booking-rail {
     position: absolute;
     top: 0;
-    right: 42px;
+    right: 10px;
     bottom: var(--site-floating-bottom-clearance);
     z-index: var(--layer-chrome);
     width: max-content;

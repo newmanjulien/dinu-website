@@ -1,19 +1,15 @@
-import { motionTiming, type GuidedTourStep } from './tour-model.ts';
+import { motionTiming, type GuidedTourStep } from '../animation/tour-model.ts';
 
-export type ContractStateId = 'baseline' | 'resale' | 'fees' | 'complete' | 'approval';
+export type ContractStateId = 'baseline' | 'resale' | 'fees' | 'complete';
 export interface PreparedRun {
 	text: string;
 	revision?: 'added' | 'removed';
 	target?: string;
 }
-export interface PreparedBlock {
-	kind: 'heading' | 'paragraph' | 'table';
-	level?: number;
-	runs?: PreparedRun[];
-	rows?: string[][];
-	headerRowCount?: number;
-	variant?: string;
-}
+export type PreparedBlock =
+	| { kind: 'heading'; level: number; runs: PreparedRun[] }
+	| { kind: 'paragraph'; runs: PreparedRun[] }
+	| { kind: 'table'; rows: string[][]; headerRowCount: number; variant?: string };
 export interface PreparedConcession {
 	id: string;
 	description: string;
@@ -27,7 +23,8 @@ export interface PreparedPanel {
 }
 export interface PreparedContract {
 	blocks: Record<string, PreparedBlock>;
-	pages: string[][];
+	blockOrder: string[];
+	pageBreaks: string[];
 	states: Record<ContractStateId, {
 		patches: Record<string, PreparedBlock>;
 		concessions: Record<string, string>;
@@ -52,9 +49,16 @@ export type AnimationTarget =
 	| { kind: 'concession'; clause: string; concession: string }
 	| { kind: 'panel'; clause: string }
 	| { kind: 'approval' };
-export type AnimationStep = GuidedTourStep<string, AnimationState, AnimationTarget>;
+export interface AnimationStep extends GuidedTourStep<string, AnimationState, AnimationTarget> {
+	motion?: { document?: number; paper?: number; guidance?: number; panel?: number; opacity?: number; cursorOpacity?: number };
+}
 export const cursorMoveDuration = 850;
 export { motionTiming };
+
+export function motionDuration(step: AnimationStep): number {
+	return Math.max(0, ...Object.values(step.motion ?? {}), step.cursor?.move ?? 0,
+		step.cursor?.fade ?? 0, step.cursor?.mode === 'clicking' ? motionTiming.click : 0);
+}
 
 /** Authoring expands scene changes into explicit motion cues, once at module load. */
 export function defineTour(steps: readonly AnimationStep[]): readonly AnimationStep[] {

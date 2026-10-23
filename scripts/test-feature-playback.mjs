@@ -3,16 +3,15 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { compileModule } from 'svelte/compiler';
 import ts from 'typescript';
-import { summaryTour } from '../src/lib/components/features/summary/summary-tour.ts';
+import { summaryTour, motionDuration } from '../src/lib/components/marketing/illustrations/click-reveal-tour.ts';
 
 // Compile the actual rune module so this exercises the player used by the components.
-const source = readFileSync(new URL('../src/lib/components/product-animation/tour-player.svelte.ts', import.meta.url), 'utf8');
+const source = readFileSync(new URL('../src/lib/components/animation/tour-player.svelte.ts', import.meta.url), 'utf8');
 const javascript = ts.transpileModule(source, {
 	compilerOptions: { target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.ESNext }
 }).outputText;
 const compiled = compileModule(javascript, { filename: 'tour-player.svelte.js' }).js.code
-	.replace("'svelte/internal/client'", JSON.stringify(import.meta.resolve('svelte/internal/client')))
-	.replace("'./tour-model.ts'", JSON.stringify(new URL('../src/lib/components/product-animation/tour-model.ts', import.meta.url).href));
+	.replace("'svelte/internal/client'", JSON.stringify(import.meta.resolve('svelte/internal/client')));
 const { createGuidedTour } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 
 test('feature playback pauses timers and visuals, resumes, and preserves the summary final state', (t) => {
@@ -68,7 +67,7 @@ test('feature playback pauses timers and visuals, resumes, and preserves the sum
 	}
 
 	const element = new Element();
-	const player = createGuidedTour(summaryTour);
+	const player = createGuidedTour(summaryTour, { getMotionEnd: motionDuration });
 	const stop = player.start(element);
 	observers.at(-1).change(1);
 	advance(summaryTour[0].duration + summaryTour[1].duration);
@@ -90,7 +89,7 @@ test('feature playback pauses timers and visuals, resumes, and preserves the sum
 	document.visibilityState = 'visible';
 	document.dispatchEvent(new Event('visibilitychange'));
 	advance(10000);
-	assert.equal(Boolean(player.step.state.box), true);
+	assert.deepEqual(player.step.state, summaryTour.at(-1).state);
 	assert.equal(player.step.cursor, null);
 	observers.at(-1).change(0);
 	observers.at(-1).change(1);
@@ -99,9 +98,9 @@ test('feature playback pauses timers and visuals, resumes, and preserves the sum
 	assert.equal(timers.size, 0);
 
 	reducedMotion = true;
-	const reduced = createGuidedTour(summaryTour);
+	const reduced = createGuidedTour(summaryTour, { getMotionEnd: motionDuration });
 	reduced.start(element)();
-	assert.equal(Boolean(reduced.step.state.box), true);
+	assert.deepEqual(reduced.step.state, summaryTour.at(-1).state);
 	assert.equal(reduced.step.cursor, null);
 	assert.equal(timers.size, 0);
 });

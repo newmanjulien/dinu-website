@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
-import { acceptChangesTour } from '../src/lib/components/features/accept/accept-changes-tour.ts';
-import { summaryTour } from '../src/lib/components/features/summary/summary-tour.ts';
-import { approvalTour } from '../src/lib/components/features/approval/approval-tour.ts';
+import contract from '../src/lib/components/product-animation/data/contract.json' with { type: 'json' };
+import { validateTour as validateProductTour } from '../src/lib/components/product-animation/validate-tour.ts';
+import type { PreparedContract } from '../src/lib/components/product-animation/model.ts';
+import { summaryTour, acceptChangesTour, approvalTour } from '../src/lib/components/marketing/illustrations/click-reveal-tour.ts';
 import { heroTour, heroCompletedStep } from '../src/lib/components/product-animation/hero-tour.ts';
-import type { GuidedTourStep } from '../src/lib/components/product-animation/tour-model.ts';
+import type { GuidedTourStep } from '../src/lib/components/animation/tour-model.ts';
 
 function validateTour(steps: ReadonlyArray<GuidedTourStep>): void {
 	assert.ok(steps.length > 0, 'A guided tour requires at least one step.');
@@ -21,3 +22,5 @@ for (const tour of [summaryTour, acceptChangesTour, approvalTour, heroTour]) {
 }
 
 assert.equal(heroCompletedStep.cursor, null, 'Reduced motion must hide the hero cursor.');
+
+validateProductTour([...heroTour, heroCompletedStep], contract as PreparedContract);

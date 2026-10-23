@@ -2,7 +2,7 @@
   const testimonials = [
     {
       quote:
-        'Agreed lets our reps close +90% of deals without help from legal.',
+        'Dinu lets our reps close +90% of deals without help from legal.',
       name: 'Maya Chen',
       role: 'VP of Sales',
       company: 'Oceans',
@@ -13,7 +13,7 @@
     },
     {
       quote:
-        'Agreed cut our sales cycle by 30% on deals under $50k.',
+        'Dinu cut our sales cycle by 30% and improved rep productivity by 10%.',
       name: 'Daniel Brooks',
       role: 'CRO',
       company: 'Brex',

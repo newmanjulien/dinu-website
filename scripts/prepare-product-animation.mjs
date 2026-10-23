@@ -12,8 +12,7 @@ const selections = {
 	baseline: {},
 	resale: { 'demo:resale': 'resale-ordinary-course-billing' },
 	fees: { 'demo:resale': 'resale-ordinary-course-billing', 'demo:annual-fee-increase-main': 'annual-fee-increase-five-percent' },
-	complete: { 'demo:resale': 'resale-ordinary-course-billing', 'demo:annual-fee-increase-main': 'annual-fee-increase-five-percent', 'demo:attorneys-fees': 'attorneys-fees-mutual' },
-	approval: { 'demo:attorneys-fees': 'attorneys-fees-mutual' }
+	complete: { 'demo:resale': 'resale-ordinary-course-billing', 'demo:annual-fee-increase-main': 'annual-fee-increase-five-percent', 'demo:attorneys-fees': 'attorneys-fees-mutual' }
 };
 function prepare(block) {
 	if (block.kind === 'table') {
@@ -43,16 +42,13 @@ for (const [id, concessions] of Object.entries(selections)) {
 		approvalCount: items.filter((item) => item.concessions.some((c) => c.id === concessions[item._id] && c.requiresApproval)).length
 	};
 }
-// Authored page endings leave space for every redline state. Pages can grow
-// on narrow screens; the presentation never clips or repaginates the text.
-const pageEndings = [8, 10, 12, 17, 19, 24, 26, 30, 35, 42, 51, 59, 64, 65, 73, 83, 92, 93, 96, 101, 112];
-let start = 0;
-const pages = pageEndings.map((end) => {
-	const page = blocks.slice(start, end + 1).map((b) => b.blockKey);
-	start = end + 1;
-	return page;
-});
-if (pages.flat().length !== blocks.length) throw new Error('Prepared pages must contain the full contract.');
+const blockOrder = blocks.map((block) => block.blockKey);
+// The agreement explicitly requests a separate signature page; Exhibit A also
+// begins on its own sheet. All other page breaks follow the rendered text.
+const pageBreaks = ['paragraph-execution', 'heading-contract-section-227'];
+for (const id of pageBreaks) {
+	if (!blockOrder.includes(id)) throw new Error(`Missing contract page break: ${id}`);
+}
 const panelIds = ['demo:resale', 'demo:amendments-statement-of-work', 'demo:annual-fee-increase-main', 'demo:attorneys-fees', 'demo:assignment'];
 const panels = panelIds.map((id) => {
 	const item = items.find((item) => item._id === id);
@@ -64,5 +60,5 @@ const panels = panelIds.map((id) => {
 	}
 	return { id, triggerId: item.triggers[0].id, summary: item.instructions?.summary ?? '', important: item.importantToNegotiate, sections };
 });
-await writeFile(new URL('../src/lib/components/product-animation/data/contract.json', import.meta.url), JSON.stringify({ blocks: baseline, pages, states, panels }) + '\n');
-console.log(`Prepared ${pages.length} contract pages and ${Object.keys(states).length} animation states.`);
+await writeFile(new URL('../src/lib/components/product-animation/data/contract.json', import.meta.url), JSON.stringify({ blocks: baseline, blockOrder, pageBreaks, states, panels }) + '\n');
+console.log(`Prepared ${blockOrder.length} contract blocks and ${Object.keys(states).length} animation states.`);

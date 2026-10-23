@@ -58,21 +58,36 @@
 
     void tick().then(() => {
       if (disposed) return;
-      const hero = container.querySelector('#overview');
-      const demo = hero?.querySelector('[data-hero-demo]');
-      if (!hero || !demo) {
-        // Without frame anchors, there is no intro to wait for.
-        finish();
-        return;
-      }
+      let hero: Element | null = null;
+      let demo: Element | null = null;
+      const resolveElements = () => {
+        hero = container.querySelector('#overview');
+        demo = hero?.querySelector('[data-hero-demo]') ?? null;
+        return [container, ...(hero ? [hero] : []), ...(demo ? [demo] : [])];
+      };
 
-      layout = observeLayout([container, hero, demo], () => {
+      layout = observeLayout(resolveElements, () => {
+        if (!container.isConnected || !hero?.isConnected || !demo?.isConnected
+          || !container.contains(hero) || !hero.contains(demo)) {
+          // Keep watching the shell so replacement anchors can restore the frame.
+          previous = geometry = null;
+          finish();
+          return;
+        }
         const rect = container.getBoundingClientRect();
+        const heroRect = hero.getBoundingClientRect();
+        const demoRect = demo.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0 || heroRect.height <= 0
+          || demoRect.width <= 0 || demoRect.height <= 0) {
+          previous = geometry = null;
+          finish();
+          return;
+        }
         const next = {
           width: rect.width,
           height: rect.height,
-          heroBottom: hero.getBoundingClientRect().bottom - rect.top,
-          demoRight: demo.getBoundingClientRect().right - rect.left,
+          heroBottom: heroRect.bottom - rect.top,
+          demoRight: demoRect.right - rect.left,
           // Four bands are reserved by the shell; padding is already resolved to pixels.
           band: parseFloat(getComputedStyle(container).paddingBottom) / 4
         };
@@ -84,7 +99,7 @@
         if (previous) finish();
         previous = next;
         geometry = next;
-      });
+      }, undefined, { mutationRoot: container });
     });
 
     return () => {

@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { createPortalAuthUrl } from '$lib/utils/portal-auth';
   import { BOOK_DEMO_URL } from '$lib/data/booking';
   import ButtonLink from '$lib/components/ui/ButtonLink.svelte';
   import SiteContainer from '$lib/components/ui/SiteContainer.svelte';
   import CustomerLogos from '$lib/components/marketing/CustomerLogos.svelte';
   import ProductAnimation from '$lib/components/product-animation/ProductAnimation.svelte';
-  import { heroTour, heroCompletedStep } from '$lib/components/product-animation/hero-tour';
 
   let { id }: { id?: string } = $props();
 </script>
@@ -21,20 +19,17 @@
     <h1
       class="font-heading font-text text-[47px] leading-[1.04] text-ink sm:text-[44px]"
     >
-      Keep sales contracts moving
+      Keep your contracts moving
     </h1>
 
     <p
       class="hero-support mt-[8px] max-w-[630px] font-light text-[21px] leading-[1.40] text-ink-muted"
     >
-    Dinu gives your sales reps the guardrails, information and support they need to handle contract negotiation themselves.
+    Dinu gives sales reps the guardrails, information and support they need to handle contract negotiation themselves.
     </p>
 
     <div class="hero-actions mt-[28px] flex flex-wrap items-center gap-[12px]">
       <ButtonLink
-        href={createPortalAuthUrl('join', '/')}
-        target="_blank"
-        rel="noopener noreferrer"
         variant="primary"
         size="large"
         shape="soft-pill"
@@ -91,10 +86,6 @@
             class="h-full w-full overflow-hidden rounded-[10px] border border-line bg-surface sm:rounded-[12px]"
           >
             <ProductAnimation
-              tour={heroTour}
-              completedStep={heroCompletedStep}
-              framing="hero"
-              loop
               label="A guided contract negotiation: open Resale, Amendments to Statement of Work, the annual fee increase, Attorneys’ Fees, and Assignment. Explore the advice and apply three concessions, two requiring approval, then click Ask for approval. The walkthrough repeats."
             />
           </div>

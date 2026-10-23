@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import type { HTMLAnchorAttributes } from 'svelte/elements';
+  import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
 
-  type ButtonLinkProps = Omit<HTMLAnchorAttributes, 'href' | 'children'> & {
-    href: string;
+  type ButtonLinkProps = (
+    | (Omit<HTMLAnchorAttributes, 'href' | 'children'> & { href: string })
+    | (Omit<HTMLButtonAttributes, 'type' | 'children'> & { href?: never })
+  ) & {
     variant: 'primary' | 'secondary' | 'soft' | 'inverse' | 'inverse-outline';
     size: 'small' | 'medium' | 'large' | 'large-plus' | 'xlarge';
     shape?: 'pill' | 'soft-pill';
@@ -17,8 +19,9 @@
     shape = 'pill',
     fullWidth = false,
     children,
+    href,
     class: className,
-    ...anchorProps
+    ...elementProps
   }: ButtonLinkProps = $props();
 
   const baseClasses =
@@ -37,11 +40,7 @@
     inverse: 'bg-white text-brand-dark hover:bg-[#fff1f0]',
     'inverse-outline': 'border border-white/35 text-white hover:border-white/60 hover:bg-white/10'
   };
-</script>
-
-<a
-  {...anchorProps}
-  class={[
+  const classes = $derived([
     baseClasses,
     shape === 'soft-pill'
       ? 'rounded-[20px] transition-[background-color,border-color,box-shadow,translate] duration-[180ms] motion-reduce:transition-none'
@@ -52,7 +51,15 @@
     variant !== 'primary' && 'hover:shadow-[0_2px_6px_rgba(32,33,36,0.08)]',
     fullWidth && 'w-full',
     className
-  ]}
->
-  {@render children()}
-</a>
+  ]);
+</script>
+
+{#if href !== undefined}
+  <a {...elementProps as HTMLAnchorAttributes} {href} class={classes}>
+    {@render children()}
+  </a>
+{:else}
+  <button {...elementProps as HTMLButtonAttributes} type="button" class={classes}>
+    {@render children()}
+  </button>
+{/if}
