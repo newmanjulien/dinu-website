@@ -17,23 +17,38 @@
     maxWidth?: number;
   } = $props();
 
-  let viewed = $state(true);
-
   const revealWhenViewed: Attachment = (node) => {
     if (typeof IntersectionObserver === 'undefined') return;
-    viewed = false;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reducedMotion.matches) return;
+
+    const entrance = node.firstElementChild!.animate(
+      [{ transform: 'translateY(24px)' }, { transform: 'none' }],
+      { duration: 180, easing: 'ease-out' }
+    );
+    entrance.pause();
 
     const observer = new IntersectionObserver(
-      (entries) => (viewed = entries.at(-1)!.isIntersecting),
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+
+        if (reducedMotion.matches) entrance.cancel();
+        else entrance.play();
+      },
       { rootMargin: '-8% 0px', threshold: 0.04 }
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      entrance.cancel();
+    };
   };
 </script>
 
-<div class={['reveal-section will-change-[opacity] motion-reduce:transition-none', viewed ? 'visible opacity-100 is-viewed' : 'invisible opacity-0']} {@attach revealWhenViewed}>
+<div {@attach revealWhenViewed}>
 <section {id} class={['px-[18px] sm:px-8', id && 'scroll-mt-[calc(var(--site-mobile-header-height)+18px)] lg:scroll-mt-12']}>
   <ContentMeasure {maxWidth}>
     <h2 class="font-heading text-[25px] leading-[1.8] tracking-[0.2px] text-ink">
@@ -52,19 +67,3 @@
   </ContentMeasure>
 </section>
 </div>
-
-<style>
-  @layer components {
-    .reveal-section {
-      transition:
-        opacity 700ms ease-out,
-        visibility 0ms linear 700ms;
-    }
-
-    .reveal-section.is-viewed {
-      transition:
-        opacity 700ms ease-out 45ms,
-        visibility 0ms linear 45ms;
-    }
-  }
-</style>

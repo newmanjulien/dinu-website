@@ -8,10 +8,10 @@
   }: {
     children: Snippet;
     class?: string;
-    maxWidth?: number;
+    maxWidth?: number | string;
   } = $props();
 </script>
 
-<div class={['mx-auto w-full', className]} style:max-width={`${maxWidth}px`}>
+<div class={['mx-auto w-full', className]} style:max-width={typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth}>
   {@render children()}
 </div>

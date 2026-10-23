@@ -21,6 +21,8 @@
   --color-selection-highlight: #b7d0fa;
   --color-danger: #b3261e;
   --color-success: #22c55e;
+  --color-brand: #ff4f45;
+  --color-brand-dark: #7e201d;
   /* Tokens used by the embedded Oceans UI; values are scoped to its root. */
   --color-ink-secondary: var(--color-ink);
   --color-control-fill: var(--color-hover);
@@ -38,8 +40,16 @@
     sans-serif;
   --site-font-heading: "Newsreader", "Newsreader Fallback", serif;
   --site-mobile-header-height: 50px;
+  --site-footer-content-width: 1086.8px;
+  --site-footer-padding: 2rem;
   --layer-chrome: 30;
   --layer-chrome-popover: 40;
+  --homepage-band-width: clamp(18px, 1.35vw, 22px);
+  --homepage-rail-width: calc(var(--homepage-band-width) * 4);
+  --homepage-band-1: #ffb1aa;
+  --homepage-band-2: #ff8177;
+  --homepage-band-3: var(--color-brand);
+  --homepage-band-4: var(--color-brand-dark);
   font-family: var(--site-font-body);
   background-color: var(--site-bg);
   color: var(--color-ink);
@@ -52,4 +62,64 @@ body {
 
 body {
   min-width: 320px;
+}
+
+@layer components {
+  .site-shell {
+    --site-floating-bottom-clearance: var(--site-footer-padding);
+    position: relative;
+    isolation: isolate;
+  }
+
+  .homepage-shell {
+    --site-bg: #fdfdfd;
+  }
+
+  .site-header,
+  .site-page,
+  #site-footer {
+    position: relative;
+    z-index: 1;
+  }
+
+  .homepage-content {
+    padding-block: 150px;
+  }
+
+  @media (min-width: 40rem) {
+    .homepage-content {
+      padding-block: 190px;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .homepage-shell {
+      --site-floating-bottom-clearance: calc(var(--homepage-rail-width) + var(--site-footer-padding));
+      padding-bottom: var(--homepage-rail-width);
+    }
+
+    .homepage-hero {
+      position: relative;
+      z-index: 1;
+    }
+
+    .homepage-hero .hero-customer-logos {
+      /* Subtract the existing centered gutter; only logos reserve space for the right rail. */
+      padding-right: max(0px, calc(var(--homepage-rail-width) + 2rem - (100vw - 100%) / 2));
+    }
+
+    .homepage-content {
+      --inner-bend-radius: max(calc(48px - var(--homepage-band-width) / 2), calc(var(--homepage-band-width) * 2));
+      margin-top: calc(var(--homepage-band-width) / -2);
+      margin-left: var(--homepage-rail-width);
+      padding-top: calc(190px + var(--homepage-band-width) / 2);
+      border-radius: var(--inner-bend-radius) 0 0 48px;
+      background: var(--site-bg);
+    }
+
+    .homepage-shell .brand-cta,
+    .homepage-shell .brand-footer {
+      margin-left: var(--homepage-rail-width);
+    }
+  }
 }

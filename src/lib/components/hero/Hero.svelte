@@ -13,7 +13,7 @@
 <section
   {id}
   class={[
-    'pt-[calc(105px-var(--site-mobile-header-height))] lg:pt-[60px]',
+    'homepage-hero pt-[calc(105px-var(--site-mobile-header-height))] lg:pt-[60px]',
     id && 'scroll-mt-[18px] lg:scroll-mt-12'
   ]}
 >
@@ -56,10 +56,11 @@
       <CustomerLogos
         interactive
         layout="demo"
-        class="mb-[24px] sm:mb-[28px]"
+        class="hero-customer-logos mb-[24px] sm:mb-[28px]"
       />
 
       <div
+        data-hero-demo
         class="mx-auto w-[95%] overflow-hidden rounded-[16px] border border-line-mid/70 bg-[#f4f4f5] shadow-[0_18px_45px_-24px_rgba(32,33,36,0.28)] sm:w-full sm:rounded-[20px]"
       >
         <div
@@ -80,7 +81,7 @@
             </svg>
           </div>
           <div class="flex min-w-0 items-center gap-[12px] text-[12px] leading-none sm:text-[13px]">
-            <span class="font-medium text-ink">Contract review</span>
+            <span class="font-medium text-ink">Contract</span>
             <span class="text-ink-muted">/</span>
             <span class="truncate text-ink-muted">Dinu</span>
           </div>

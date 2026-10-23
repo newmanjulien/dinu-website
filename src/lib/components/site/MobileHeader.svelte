@@ -16,8 +16,8 @@
 </script>
 
 <header class="z-(--layer-chrome) relative flex h-[var(--site-mobile-header-height)] w-full shrink-0 items-center justify-between bg-[var(--site-bg)] px-[20px] lg:hidden">
-  <a href="/" class="h-[27px] w-fit" aria-label="Dinu home">
-    <img src="/dinu-logo.png" alt="" width="307" height="95" class="h-full w-auto" />
+  <a href="/" class="h-[28.35px] w-fit" aria-label="Dinu home">
+    <img src="/dinu.svg" alt="" width="316" height="102" class="h-full w-auto" />
   </a>
   <button
     type="button"
