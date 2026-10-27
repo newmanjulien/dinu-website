@@ -48,7 +48,7 @@
     <div class="intro-section">
       <ContentSection id={sections.intro.id} title={sections.intro.title}>
         {#snippet body()}
-          <p>When a buyer sends back a redlined contract, your reps are stuck waiting on legal. Deals that should be closing get caught in a slow and expensive review process.</p>
+          <p>Today, when a buyer sends back a redlined contract, your reps are stuck waiting on legal. Deals that should be closing get caught in a slow and expensive review back-and-forth.</p>
           <p>Give reps the guardrails to safely handle more of the contract process themselves and keep deals moving quickly toward signature.</p>
         {/snippet}
       </ContentSection>
@@ -71,7 +71,7 @@
 
     <ContentSection id={sections.accept.id} title={sections.accept.title}>
       {#snippet body()}
-        <p>Reps apply standard concessions directly to the contract. And they easily escalate anything outside those limits.</p>
+        <p>Reps apply standard concessions directly to the contract. And easily escalate anything outside those limits.</p>
       {/snippet}
       <AcceptChangesWidget />
     </ContentSection>
@@ -92,7 +92,7 @@
 
     <ContentSection id={sections.customers.id} title={sections.customers.title} maxWidth={986.1}>
       {#snippet body()}
-        <p>See how sales teams use Dinu to let reps handle more negotiations themselves, to shorten their sales cycles and to increase revenue.</p>
+        <p>See how sales teams use Dinu to let their sales reps handle more negotiations themselves, speed up their sales cycles and to increase rep productivity.</p>
       {/snippet}
       <CustomerTestimonials />
     </ContentSection>

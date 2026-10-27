@@ -186,7 +186,12 @@
     if (!el) return;
 
     event.preventDefault();
-    el.scrollIntoView({ behavior: reduceMotion.current ? 'auto' : 'smooth', block: 'start' });
+    const behavior = reduceMotion.current ? 'auto' : 'smooth';
+    if (id === sections[0]?.id) {
+      window.scrollTo({ top: 0, behavior });
+    } else {
+      el.scrollIntoView({ behavior, block: 'start' });
+    }
     replaceState(`#${id}`, page.state);
   }
 </script>

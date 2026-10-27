@@ -9,6 +9,6 @@
   tone === 'brand' ? 'brand-footer bg-brand-dark text-white/65' : 'text-ink-muted/60'
 ]}>
   <ContentMeasure maxWidth="var(--site-footer-content-width)" class={`border-t py-[var(--site-footer-padding)] ${tone === 'brand' ? 'border-white/15' : 'border-line'}`}>
-    <p class="text-sm font-book">Dinusaur, Inc.</p>
+    <p class="text-[15px] font-book">Dinusaur, Inc.</p>
   </ContentMeasure>
 </footer>
