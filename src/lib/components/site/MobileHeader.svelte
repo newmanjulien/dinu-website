@@ -3,6 +3,7 @@
   import { cubicOut } from 'svelte/easing';
   import { MediaQuery } from 'svelte/reactivity';
   import { slide } from 'svelte/transition';
+  import BrandLogo from '$lib/components/site/BrandLogo.svelte';
   import ButtonLink from '$lib/components/ui/ButtonLink.svelte';
 
   const lineClasses = 'absolute left-[3px] top-1/2 h-0.5 w-5 origin-center rounded-full bg-current rotate-0 transition-transform duration-[260ms] ease-[ease] group-aria-expanded:translate-y-0 motion-reduce:duration-[1ms]';
@@ -13,7 +14,7 @@
 
 <header class="z-(--layer-chrome) relative flex h-[var(--site-mobile-header-height)] w-full shrink-0 items-center justify-between bg-[var(--site-bg)] px-[20px] lg:hidden">
   <a href="/" class="h-[28.35px] w-fit" aria-label="Dinu home">
-    <img src="/dinu.svg" alt="" width="316" height="102" class="h-full w-auto" />
+    <BrandLogo />
   </a>
   <button
     type="button"
