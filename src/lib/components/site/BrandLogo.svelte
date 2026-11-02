@@ -25,22 +25,22 @@
     aspect-ratio: 1;
     border-radius: 50%;
     background: var(--site-bg);
-    transform: scale(0);
+    opacity: 0;
   }
 
   :global(a:hover) .brand-logo__eye,
   :global(a:focus-visible) .brand-logo__eye {
-    animation: blink 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    animation: blink 324ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @keyframes blink {
     0%,
     100% {
-      transform: scale(0);
+      opacity: 0;
     }
 
     35% {
-      transform: scale(1);
+      opacity: 1;
     }
   }
 
