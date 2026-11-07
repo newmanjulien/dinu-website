@@ -20,37 +20,43 @@
       logo: '/logos/brex.svg',
       logoWidth: 800,
       logoHeight: 211,
-      displayHeight: 23
+      displayHeight: 25
+    },
+    {
+      quote:
+        'Dinu keeps deals moving and lets legal focus where it matters.',
+      name: 'Sophie Laurent',
+      role: 'CRO',
+      company: 'Vanta',
+      logo: '/logos/vanta.svg',
+      logoWidth: 716,
+      logoHeight: 279,
+      displayHeight: 30
     }
   ];
-
-  const logoSlotHeight = Math.max(...testimonials.map((t) => t.displayHeight));
 </script>
 
-<div class="grid gap-[34px] md:grid-cols-2 md:gap-x-[48px]">
+<div class="grid gap-[34px] md:grid-cols-3 md:gap-x-[32px] lg:gap-x-[40px]">
   {#each testimonials as testimonial}
-    <figure class="border-t border-line pt-[18px] sm:pt-[20px]">
-      <div
-        class="mb-[16px] flex items-end sm:mb-[18px]"
-        style={`height: ${logoSlotHeight}px`}
-      >
+    <figure class="flex min-w-0 flex-col border-t border-line pt-[18px] sm:pt-[20px]">
+      <div class="mb-[16px] flex h-[40px] items-center sm:mb-[18px]">
         <img
           src={testimonial.logo}
           alt=""
           width={testimonial.logoWidth}
           height={testimonial.logoHeight}
-          class="w-auto object-contain"
+          class="block max-w-full w-auto object-contain object-left"
           style={`height: ${testimonial.displayHeight}px`}
         />
       </div>
 
       <blockquote
-        class="font-heading text-[18px] font-book italic leading-[1.42] text-ink sm:text-[20px]"
+        class="flex-1 font-heading text-[16.5px] font-book italic leading-[1.42] text-ink sm:text-[18.5px]"
       >
         “{testimonial.quote}”
       </blockquote>
 
-      <figcaption class="mt-[14px] flex flex-wrap items-baseline gap-x-[6px] gap-y-[4px] text-[14px] font-book leading-[1.3] sm:text-[15px]">
+      <figcaption class="mt-[18px] flex flex-col gap-[4px] text-[14px] font-book leading-[1.4] sm:text-[15px]">
         <span class="text-ink">{testimonial.name}</span>
         <span class="text-ink-muted">{testimonial.role}, {testimonial.company}</span>
       </figcaption>
