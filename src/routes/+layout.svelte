@@ -19,20 +19,22 @@
 <svelte:head>
   <link rel="preconnect" href="https://portal.overbase.app" />
 </svelte:head>
-<div bind:this={shell} class="site-shell flex min-h-[100dvh] flex-col bg-[var(--site-bg)]" class:homepage-shell={isHomepage}>
+<div bind:this={shell} class={['site-shell group/site relative isolate flex min-h-[100dvh] flex-col bg-[var(--site-bg)]', isHomepage ? '[--header-logo-color:var(--color-ink)] lg:pb-[var(--homepage-rail-width)]' : '[--header-logo-color:#fc3636]']} class:homepage-shell={isHomepage}>
   {#if isHomepage}
     <HomepageFrame root={shell} revealTarget={bookingWidget} bind:revealed={frameRevealed} />
   {/if}
-  <DesktopHeader />
-  <MobileHeader />
-  <BookingWidget
-    bind:widget={bookingWidget}
-    visible={!isHomepage || frameRevealed}
-    brandSectionId={isHomepage ? CTA_SECTION_ID : undefined}
-  />
+  <div class={['site-body flex flex-1 flex-col', !isHomepage && 'relative']}>
+    <DesktopHeader />
+    <MobileHeader />
+    <BookingWidget
+      bind:widget={bookingWidget}
+      visible={!isHomepage || frameRevealed}
+      brandSectionId={isHomepage ? CTA_SECTION_ID : undefined}
+    />
 
-  <div class="site-page flex-1">
-    {@render children()}
+    <div class="site-page relative z-[1] flex-1">
+      {@render children()}
+    </div>
   </div>
 
   <Footer tone={isHomepage ? 'brand' : 'default'} />

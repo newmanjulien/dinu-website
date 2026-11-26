@@ -44,8 +44,14 @@
 <main>
   <Hero id={overview.id} />
 
-  <div class="homepage-content flex flex-col">
-    <div class="intro-section">
+  <div class="
+    homepage-content flex flex-col gap-[var(--section-gap)] pt-[150px] pb-[174px] [--section-gap:150px]
+    sm:pt-[190px] sm:pb-[214px] sm:[--section-gap:190px] lg:mt-[calc(var(--homepage-band-width)/-2)]
+    lg:ml-[var(--homepage-rail-width)]
+    lg:rounded-[max(calc(48px-var(--homepage-band-width)/2),calc(var(--homepage-band-width)*2))_0_0_48px]
+    lg:bg-[var(--site-bg)] lg:pt-[calc(190px+var(--homepage-band-width)/2)]
+  ">
+    <div class="relative">
       <ContentSection id={sections.intro.id} title={sections.intro.title}>
         {#snippet body()}
           <p>Today, when a buyer sends back a redlined contract, your reps are stuck waiting on legal. Deals that should be closing get caught in a slow and expensive review back-and-forth.</p>
@@ -58,7 +64,7 @@
         aria-hidden="true"
         width="240"
         height="290"
-        class="edge-dinosaur"
+        class="pointer-events-none absolute top-[calc(100%+var(--section-gap)/2-10px)] right-0 hidden h-auto w-[106.4px] -translate-y-1/2 select-none lg:block"
       />
     </div>
 
@@ -99,39 +105,3 @@
   </div>
   <CtaSection id={CTA_SECTION_ID} />
 </main>
-
-<style>
-  .homepage-content {
-    --section-gap: 150px;
-    gap: var(--section-gap);
-  }
-
-  .intro-section {
-    position: relative;
-  }
-
-  .edge-dinosaur {
-    display: none;
-    position: absolute;
-    /* Center in the section gap, lifted 10px for visual alignment. */
-    top: calc(100% + var(--section-gap) / 2 - 10px);
-    right: 0;
-    width: 106.4px;
-    height: auto;
-    transform: translateY(-50%);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  @media (min-width: 40rem) {
-    .homepage-content {
-      --section-gap: 190px;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .edge-dinosaur {
-      display: block;
-    }
-  }
-</style>

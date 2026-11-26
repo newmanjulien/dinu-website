@@ -138,7 +138,7 @@ paginate: (state: ContractStateId, fontVersion: number) => Promise<boolean>) {
 		for (const node of column.querySelectorAll<HTMLElement>('.contract-paper [data-highlight]')) {
 			const id = node.dataset.highlight!;
 			if (!highlights.has(id)) highlights.set(id, node);
-			if (!revisionNodes.has(id) && (node.classList.contains('added') || node.classList.contains('removed'))) revisionNodes.set(id, node);
+			if (!revisionNodes.has(id) && node.dataset.revision) revisionNodes.set(id, node);
 		}
 		const clauses = new Map<string, Bounds>(), revisions = new Map<string, Bounds>();
 		const targets = new Map<string, TargetPoint>(), panelBounds = new Map<string, Bounds>();

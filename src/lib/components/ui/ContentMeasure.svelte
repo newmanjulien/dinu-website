@@ -4,11 +4,11 @@
   let {
     children,
     class: className,
-    maxWidth = 1040
+    maxWidth
   }: {
     children: Snippet;
     class?: string;
-    maxWidth?: number | string;
+    maxWidth: number | string;
   } = $props();
 </script>
 

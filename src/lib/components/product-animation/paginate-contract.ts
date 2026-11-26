@@ -33,7 +33,7 @@ export function paginateContract(blocks: PageBlock[], pageBreaks: string[], sour
 
 	function clearSheet() {
 		content.replaceChildren();
-		sheet.classList.toggle('first-page', pages.length === 1);
+		sheet.dataset.firstPage = String(pages.length === 1);
 		const style = getComputedStyle(sheet);
 		capacity = parseFloat(style.minHeight) - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
 			- parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth);
@@ -68,7 +68,7 @@ export function paginateContract(blocks: PageBlock[], pageBreaks: string[], sour
 			text.data = original.slice(Math.max(0, start - offset), Math.max(0, end - offset));
 			offset += original.length;
 		}
-		node.classList.toggle('continues', end < length);
+		node.dataset.continues = String(end < length);
 		return node;
 	}
 

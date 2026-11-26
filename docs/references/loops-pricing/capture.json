@@ -1,0 +1,60 @@
+{
+  "captured_on": "2026-11-25",
+  "page_url": "https://loops.so/pricing",
+  "saved_full_page_sha256": "8056539d845adbff7122732c1eb3587fe227b5b635186560ed6186c7f79da4af",
+  "page_typography_excerpt_file": "page-typography.published.css",
+  "page_typography_excerpt_file_sha256": "f77f9fb75da5f5e5199dd9f1d12869971d012b714a14a89c8048fc80126c6c99",
+  "source_url": "https://framerusercontent.com/sites/6mKmSN0Irj9Tv9spjec3zG/WGlKKEJ8NNt9A32Hx0ms6dLh09AkxAn9u84qIfGr8gg.ObWq8hpF.mjs",
+  "bundle_sha256": "676f77921b692514c9a0823a8dc2f8de3370896a513259631f608f8364a1ba86",
+  "published_excerpt_sha256": "3e3087707b957c40efa185b5b45a1bc48675844b1880325bbcf8b670aeaef153",
+  "published_excerpt_sha256_scope": "Raw extracted code beginning at function mn, excluding the added reference header and trailing whitespace.",
+  "published_excerpt_file_sha256": "5515ff01ba223932148f06d0f628c47f5d4694b22721818b6146131beca88107",
+  "video_path": "/Users/juliennewman/Desktop/Screen Recording 2026-11-25 at 4.17.19 PM.mov",
+  "video": {
+    "width": 2878,
+    "height": 1306,
+    "fps": 59.95,
+    "duration_seconds": 20.33333333333333
+  },
+  "reference_card_width_css_px": 1248,
+  "reference_outer_site_max_width_css_px": 1296,
+  "reference_outer_site_padding_inline_css_px": 24,
+  "colors": {
+    "ink": {
+      "token": "--token-e5dd00a8-a1c8-408b-b050-1cf1ab615219",
+      "light": "#21201c",
+      "dark": "#eeeeec"
+    },
+    "muted": {
+      "token": "--token-2a5f3230-4a8b-49e0-8e32-9494e91450f2",
+      "light": "#63635e",
+      "dark": "#b5b3ad"
+    },
+    "surface": {
+      "token": "--token-83f5fefd-8241-47f8-8f7c-5e6247fea9aa",
+      "light": "#fdfdfc",
+      "dark": "#111110"
+    },
+    "border": {
+      "token": "--token-6b4c9de0-1933-4ebb-b983-b632663eba1c",
+      "light": "#dad9d6",
+      "dark": "#3b3a37"
+    },
+    "strongBorder": {
+      "token": "--token-ba9e30f7-c04b-4022-9049-93bb7c16efdd",
+      "light": "#cfceca",
+      "dark": "#494844"
+    },
+    "card": {
+      "token": "--token-65538b51-ace3-4873-b4db-4d71bdbd1f8b",
+      "light": "#f9f9f8",
+      "dark": "#191918"
+    },
+    "mobileGrowth": {
+      "token": "--token-e5fe42bb-0171-444b-bb6c-b12015a4b434",
+      "light": "#f1f0ef",
+      "dark": "#222221"
+    }
+  },
+  "font_declarations_captured": 5
+}

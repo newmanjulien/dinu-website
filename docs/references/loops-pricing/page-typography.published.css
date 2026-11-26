@@ -1,0 +1,8 @@
+/* Page-level rules extracted from the saved 2026-11-25 loops.so/pricing HTML.
+   The original selectors/declarations below are reference material only.
+   No ancestor of the pricing component overrides font-size or line-height;
+   its default line-height is normal, rather than Tailwind's inherited 1.5.
+   Port these defaults inside .loops-pricing, never onto Dinu's page root. */
+:root{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+*{box-sizing:border-box;-webkit-font-smoothing:inherit}
+body,input,textarea,select,button{font-family:sans-serif;font-size:12px}

@@ -153,8 +153,7 @@
 {#if geometry && frame}
   <svg
     bind:this={svg}
-    class="homepage-frame"
-    class:finished
+    class="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden lg:block"
     width={geometry.width}
     height={geometry.height}
     viewBox={`0 0 ${geometry.width} ${geometry.height}`}
@@ -166,7 +165,7 @@
     <path d={frame.fill} fill="var(--color-brand-dark)" />
     {#each frame.ribbons as ribbon, index}
       <path
-        class="ribbon"
+        class={['ribbon [stroke-dasharray:1]', finished ? '[stroke-dashoffset:0]' : 'motion-safe:[stroke-dashoffset:1] motion-safe:animate-[draw-ribbon_var(--draw-duration)_linear_var(--draw-delay)_forwards] [stroke-dashoffset:0]']}
         d={ribbon.path}
         fill="none"
         stroke={`var(--homepage-band-${index + 1})`}
@@ -177,40 +176,3 @@
     {/each}
   </svg>
 {/if}
-
-<style>
-  .homepage-frame {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    display: none;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .ribbon {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: draw-ribbon var(--draw-duration) linear var(--draw-delay) forwards;
-  }
-
-  .finished .ribbon {
-    animation: none;
-    stroke-dashoffset: 0;
-  }
-
-  @keyframes draw-ribbon {
-    to { stroke-dashoffset: 0; }
-  }
-
-  @media (min-width: 64rem) {
-    .homepage-frame { display: block; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .ribbon {
-      animation: none;
-      stroke-dashoffset: 0;
-    }
-  }
-</style>

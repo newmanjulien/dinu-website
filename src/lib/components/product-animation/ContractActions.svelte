@@ -2,21 +2,30 @@
 	let { approvalCount, highlighted = false }: { approvalCount: number; highlighted?: boolean } = $props();
 </script>
 
-<div class="contract-actions" data-contract-actions>
-	<div class="action-buttons">
-		<button type="button" tabindex="-1" data-animation-target="approval" disabled={approvalCount === 0} class:highlighted>Ask for approval</button>
-		<button type="button" tabindex="-1" disabled={approvalCount > 0}>Send to buyer</button>
+<div class="w-[816px] pt-6 pb-4 group-data-[mobile=true]/animation:w-full group-data-[mobile=true]/animation:text-[13px]" data-contract-actions>
+	<div class="flex justify-center gap-3">
+		<button
+			type="button"
+			tabindex="-1"
+			data-animation-target="approval"
+			disabled={approvalCount === 0}
+			class={[
+				'rounded-lg border px-5 py-2.5 font-[inherit] whitespace-nowrap group-data-[mobile=true]/animation:px-3',
+				approvalCount === 0 ? 'border-line bg-control-fill text-ink-muted' : [
+					highlighted ? 'border-[var(--color-accent-hover)] bg-[var(--color-accent-hover)]' : 'border-accent bg-accent',
+					'text-white'
+				]
+			]}
+		>Ask for approval</button>
+		<button
+			type="button"
+			tabindex="-1"
+			disabled={approvalCount > 0}
+			class={[
+				'rounded-lg border px-5 py-2.5 font-[inherit] whitespace-nowrap group-data-[mobile=true]/animation:px-3',
+				approvalCount > 0 ? 'border-line bg-control-fill text-ink-muted' : 'border-accent bg-accent text-white'
+			]}
+		>Send to buyer</button>
 	</div>
-	<p>{approvalCount === 0 ? 'None of your changes need approval' : approvalCount === 1 ? '1 of your changes needs approval' : `${approvalCount} of your changes need approval`}</p>
+	<p class="mt-3 text-center text-[14px] text-line-strong">{approvalCount === 0 ? 'None of your changes need approval' : approvalCount === 1 ? '1 of your changes needs approval' : `${approvalCount} of your changes need approval`}</p>
 </div>
-
-<style>
-	.contract-actions { width: 816px; padding: 24px 0 16px; }
-	.action-buttons { display: flex; justify-content: center; gap: 12px; }
-	button { border: 1px solid var(--color-accent); border-radius: 8px; background: var(--color-accent); color: white; padding: 10px 20px; font: inherit; white-space: nowrap; }
-	button.highlighted { border-color: var(--color-accent-hover); background: var(--color-accent-hover); }
-	button:disabled { border-color: var(--color-line); background: var(--color-control-fill); color: var(--color-ink-muted); }
-	p { margin: 12px 0 0; text-align: center; font-size: 14px; color: var(--color-line-strong); }
-	:global(.product-animation.is-mobile) .contract-actions { width: 100%; font-size: 13px; }
-	:global(.product-animation.is-mobile) button { padding: 10px 12px; }
-</style>

@@ -4,6 +4,7 @@
   import SiteContainer from '$lib/components/ui/SiteContainer.svelte';
   import CustomerLogos from '$lib/components/marketing/CustomerLogos.svelte';
   import ProductAnimation from '$lib/components/product-animation/ProductAnimation.svelte';
+  import { createPortalAuthUrl } from '$lib/utils/portal-auth';
 
   let { id }: { id?: string } = $props();
 </script>
@@ -11,7 +12,7 @@
 <section
   {id}
   class={[
-    'homepage-hero pt-[calc(105px-var(--site-mobile-header-height))] lg:pt-[60px]',
+    'homepage-hero lg:relative lg:z-[1] pt-[calc(105px-var(--site-mobile-header-height))] lg:pt-[60px]',
     id && 'scroll-mt-[18px] lg:scroll-mt-12'
   ]}
 >
@@ -23,17 +24,26 @@
     </h1>
 
     <p
-      class="hero-support mt-[8px] max-w-[630px] font-light text-[21px] leading-[1.40] text-ink-muted"
+      class="
+        motion-safe:animate-[hero-content-enter_320ms_cubic-bezier(0.22,1,0.36,1)_590ms_both] mt-[8px] max-w-[630px]
+        font-light text-[21px] leading-[1.40] text-ink-muted
+      "
     >
     Dinu gives sales reps the guardrails, information and support they need to handle contract negotiation themselves.
     </p>
 
-    <div class="hero-actions mt-[28px] flex flex-wrap items-center gap-[12px]">
+    <div class="
+      motion-safe:animate-[hero-content-enter_620ms_cubic-bezier(0.22,1,0.36,1)_690ms_both]
+      motion-safe:[--hero-enter-offset:10px] mt-[28px] flex flex-wrap items-center gap-[12px]
+    ">
       <ButtonLink
+        href={createPortalAuthUrl('join', '/')}
+        target="_blank"
+        rel="noopener noreferrer"
         variant="primary"
         size="large"
         shape="soft-pill"
-        class="shadow-[0_4px_10px_rgba(32,33,36,0.18)] motion-safe:hover:-translate-y-[2px] hover:shadow-[0_5px_12px_rgba(32,33,36,0.18)]"
+        class="h-[44px]! shadow-[0_4px_10px_rgba(32,33,36,0.18)] motion-safe:hover:-translate-y-[2px] hover:shadow-[0_5px_12px_rgba(32,33,36,0.18)]"
       >
         Start for free
       </ButtonLink>
@@ -43,20 +53,24 @@
         rel="noopener noreferrer"
         variant="secondary"
         size="large"
+        class="h-[44px]!"
       >
         Book a demo
       </ButtonLink>
     </div>
-    <div class="hero-graphic relative mt-[80px] w-full">
+    <div class="relative motion-safe:animate-[hero-content-enter_320ms_cubic-bezier(0.22,1,0.36,1)_690ms_both] [--logos-enter-delay:750ms] mt-[80px] w-full">
       <CustomerLogos
         interactive
         layout="demo"
-        class="hero-customer-logos mb-[24px] sm:mb-[28px]"
+        class="lg:pr-[max(0px,calc(var(--homepage-rail-width)+2rem-(100vw-100%)/2))] mb-[24px] sm:mb-[28px]"
       />
 
       <div
         data-hero-demo
-        class="mx-auto w-[95%] overflow-hidden rounded-[16px] border border-line-mid/70 bg-[#f4f4f5] shadow-[0_18px_45px_-24px_rgba(32,33,36,0.28)] sm:w-full sm:rounded-[20px]"
+        class="
+          mx-auto w-[95%] overflow-hidden rounded-[16px] border border-line-mid/70 bg-[#f4f4f5]
+          shadow-[0_18px_45px_-24px_rgba(32,33,36,0.28)] sm:w-full sm:rounded-[20px]
+        "
       >
         <div
           class="flex h-[38px] items-center gap-[16px] border-b border-line-mid/70 px-[12px] sm:h-[40px] sm:gap-[20px] sm:px-[16px]"
@@ -94,56 +108,3 @@
     </div>
   </SiteContainer>
 </section>
-
-<style>
-  @layer components {
-    section {
-      --hero-ease: cubic-bezier(0.22, 1, 0.36, 1);
-      --hero-content-duration: 320ms;
-      --hero-content-delay: 690ms;
-    }
-
-    .hero-support,
-    .hero-actions,
-    .hero-graphic {
-      opacity: 0;
-      transform: translateY(4px);
-      animation: hero-content-enter var(--hero-content-duration) var(--hero-ease)
-        var(--hero-content-delay) both;
-    }
-
-    .hero-support {
-      animation-delay: calc(var(--hero-content-delay) - 100ms);
-    }
-
-    .hero-actions {
-      transform: translateY(10px);
-      animation-duration: 620ms;
-    }
-
-    /*
-     * CustomerLogos staggers each individual logo
-     * from this base delay.
-     */
-    .hero-graphic {
-      --logos-enter-delay: calc(var(--hero-content-delay) + 60ms);
-    }
-
-    @keyframes hero-content-enter {
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero-support,
-      .hero-actions,
-      .hero-graphic {
-        animation: none;
-        opacity: 1;
-        transform: none;
-      }
-    }
-  }
-</style>

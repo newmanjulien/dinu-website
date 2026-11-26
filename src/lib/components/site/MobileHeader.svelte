@@ -1,10 +1,12 @@
 <script lang="ts">
   import { afterNavigate } from '$app/navigation';
+  import { page } from '$app/state';
   import { cubicOut } from 'svelte/easing';
   import { MediaQuery } from 'svelte/reactivity';
   import { slide } from 'svelte/transition';
   import BrandLogo from '$lib/components/site/BrandLogo.svelte';
   import ButtonLink from '$lib/components/ui/ButtonLink.svelte';
+  import { createPortalAuthUrl } from '$lib/utils/portal-auth';
 
   const lineClasses = 'absolute left-[3px] top-1/2 h-0.5 w-5 origin-center rounded-full bg-current rotate-0 transition-transform duration-[260ms] ease-[ease] group-aria-expanded:translate-y-0 motion-reduce:duration-[1ms]';
   let open = $state(false);
@@ -12,7 +14,7 @@
   afterNavigate(() => { open = false; });
 </script>
 
-<header class="z-(--layer-chrome) relative flex h-[var(--site-mobile-header-height)] w-full shrink-0 items-center justify-between bg-[var(--site-bg)] px-[20px] lg:hidden">
+<header class="z-(--layer-chrome) relative flex h-[var(--site-mobile-header-height)] w-full shrink-0 items-center justify-between bg-[var(--site-bg)] px-[18px] sm:px-8 lg:hidden">
   <a href="/" class="h-[28.35px] w-fit" aria-label="Dinu home">
     <BrandLogo />
   </a>
@@ -37,14 +39,36 @@
       aria-label="Mobile primary"
       transition:slide={{ duration: reduceMotion.current ? 0 : 380, axis: 'y', easing: cubicOut }}
     >
-      <div class="flex flex-col px-[20px] pt-[26px]">
+      <div class="flex flex-col px-[18px] pt-[26px] sm:px-8">
         <h2 class="mb-[14px] text-[12px] font-book uppercase leading-none tracking-[0.12em] text-ink-muted">Dinu</h2>
-        <button type="button" class="cursor-pointer py-[10px] text-left text-[20px] leading-none text-ink-muted">Pricing</button>
-        <button type="button" class="cursor-pointer py-[10px] text-left text-[20px] leading-none text-ink-muted">About</button>
+        <a
+          href="/pricing"
+          aria-current={page.url.pathname === '/pricing' ? 'page' : undefined}
+          class="-mx-[8px] rounded-[8px] px-[8px] py-[6px] text-[21px] leading-none text-ink-muted hover:bg-hover"
+        >Pricing</a>
+        <a
+          href="/about"
+          aria-current={page.url.pathname === '/about' ? 'page' : undefined}
+          class="-mx-[8px] rounded-[8px] px-[8px] py-[6px] text-[21px] leading-none text-ink-muted hover:bg-hover"
+        >About</a>
       </div>
-      <div class="mt-[30px] flex flex-col gap-[12px] border-t border-line px-[20px] pt-[24px]">
-        <ButtonLink variant="soft" size="large" fullWidth>Log in</ButtonLink>
-        <ButtonLink variant="primary" size="large" fullWidth>Start for free</ButtonLink>
+      <div class="mt-[30px] flex flex-col gap-[12px] border-t border-line px-[18px] pt-[24px] sm:px-8">
+        <ButtonLink
+          href={createPortalAuthUrl('login', page.url.pathname)}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="soft"
+          size="large"
+          fullWidth
+        >Log in</ButtonLink>
+        <ButtonLink
+          href={createPortalAuthUrl('join', page.url.pathname)}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="primary"
+          size="large"
+          fullWidth
+        >Start for free</ButtonLink>
       </div>
     </nav>
   {/if}

@@ -10,7 +10,6 @@
 	import { heroTour, heroCompletedStep } from './hero-tour';
 	import type { CursorFrame } from '../animation/tour-model';
 	import { motionDuration, type ContractStateId, type PreparedContract } from './model';
-	import './animation.css';
 
 	let { label }: { label: string } = $props();
 	const contract = data as PreparedContract;
@@ -46,15 +45,25 @@
 	});
 </script>
 
-<div class="product-animation" class:is-mobile={mobile} bind:this={frameElement} role="img" aria-label={label}>
-	<div class="animation-content" aria-hidden="true" inert>
-		<div class="animation-stage" bind:this={stageElement}>
-			<div class="document-viewport" bind:this={viewportElement}>
-				<div class="document-column" bind:this={columnElement}>
+<div class="
+	product-animation group/animation relative h-full w-full overflow-hidden bg-canvas
+	font-[Arial,Helvetica,sans-serif] text-[16px] leading-[1.5] text-ink text-left select-none
+	[--color-canvas:#f1f3f4] [--color-ink:#202124] [--color-ink-muted:#5f6368] [--color-line:#dadce0]
+	[--color-line-strong:#9aa0a6] [--color-control-fill:#e3e6e8] [--color-fill-subtle:#e8eaed]
+	[--color-accent:#2563eb] [--color-accent-hover:#1d4ed8] [--color-danger:#b42318]
+	[--color-danger-surface:#fff1f0] [--document-highlight-trigger:rgba(34,197,94,0.16)]
+	[--document-highlight-trigger-hover:rgba(34,197,94,0.22)]
+	[--document-highlight-trigger-selected:rgba(34,197,94,0.28)] [--document-highlight-revision-added:#dcf1b9]
+	[--document-highlight-revision-removed:#e5e7eb]
+" data-mobile={mobile} bind:this={frameElement} role="img" aria-label={label}>
+	<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" inert>
+		<div class="absolute top-0 left-0 h-[860px] w-[1440px] origin-top-left" bind:this={stageElement}>
+			<div class="absolute inset-0 overflow-hidden [overflow-anchor:none]" bind:this={viewportElement}>
+				<div class="ml-20 w-[816px] py-6 [transform:translateX(232px)] group-data-[mobile=true]/animation:ml-3 group-data-[mobile=true]/animation:w-[calc(100%-24px)]" bind:this={columnElement}>
 					<ContractDocument bind:this={documentRenderer} {contract} {snapshot} {selectedTrigger} {hoveredTrigger} />
 					<ContractActions approvalCount={snapshot.approvalCount} highlighted={step.cursor?.target.kind === 'approval'} />
 				</div>
-				<div class="panel-rail" bind:this={railElement}>
+				<div class="invisible absolute left-[920px] w-[440px] opacity-0 group-data-[mobile=true]/animation:left-6 group-data-[mobile=true]/animation:w-[calc(100%-48px)]" bind:this={railElement}>
 					{#key panel.id}<GuidancePanel {panel} openSection={step.state.box?.section} selected={snapshot.concessions[panel.id]} />{/key}
 				</div>
 			</div>
@@ -62,14 +71,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.product-animation { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: var(--color-ink); background: var(--color-canvas); text-align: left; user-select: none; }
-	.animation-content { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-	.animation-stage { position: absolute; left: 0; top: 0; width: 1440px; height: 860px; transform-origin: top left; }
-	.document-viewport { position: absolute; inset: 0; overflow: hidden; overflow-anchor: none; }
-	.document-column { width: 816px; margin-left: 80px; padding: 24px 0; transform: translateX(232px); }
-	.panel-rail { position: absolute; left: 920px; width: 440px; visibility: hidden; opacity: 0; }
-	.is-mobile .document-column { width: calc(100% - 24px); margin-left: 12px; }
-	.is-mobile .panel-rail { left: 24px; width: calc(100% - 48px); }
-</style>

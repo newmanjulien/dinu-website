@@ -1,51 +1,19 @@
 <script lang="ts">
-  const testimonials = [
-    {
-      quote:
-        'Dinu lets our reps close +90% of deals without help from legal.',
-      name: 'Maya Chen',
-      role: 'VP of Sales',
-      company: 'Oceans',
-      logo: '/logos/oceans.svg',
-      logoWidth: 496,
-      logoHeight: 125,
-      displayHeight: 32
-    },
-    {
-      quote:
-        'Dinu cut our sales cycle by 30% and improved rep productivity by 10%.',
-      name: 'Daniel Brooks',
-      role: 'CRO',
-      company: 'Brex',
-      logo: '/logos/brex.svg',
-      logoWidth: 800,
-      logoHeight: 211,
-      displayHeight: 25
-    },
-    {
-      quote:
-        'Dinu keeps deals moving and lets legal focus where it matters.',
-      name: 'Sophie Laurent',
-      role: 'CRO',
-      company: 'Vanta',
-      logo: '/logos/vanta.svg',
-      logoWidth: 716,
-      logoHeight: 279,
-      displayHeight: 30
-    }
-  ];
+  import { CUSTOMER_BRANDS, CUSTOMER_TESTIMONIALS } from '$lib/data/customers';
 </script>
 
 <div class="grid gap-[34px] md:grid-cols-3 md:gap-x-[32px] lg:gap-x-[40px]">
-  {#each testimonials as testimonial}
+  {#each CUSTOMER_TESTIMONIALS as testimonial (testimonial.brandId)}
+    {@const brand = CUSTOMER_BRANDS.find((brand) => brand.id === testimonial.brandId)!}
     <figure class="flex min-w-0 flex-col border-t border-line pt-[18px] sm:pt-[20px]">
       <div class="mb-[16px] flex h-[40px] items-center sm:mb-[18px]">
         <img
-          src={testimonial.logo}
+          src={brand.src}
           alt=""
-          width={testimonial.logoWidth}
-          height={testimonial.logoHeight}
+          width={brand.width}
+          height={brand.height}
           class="block max-w-full w-auto object-contain object-left"
+          class:brightness-0={brand.id === 'replit'}
           style={`height: ${testimonial.displayHeight}px`}
         />
       </div>
@@ -58,7 +26,7 @@
 
       <figcaption class="mt-[18px] flex flex-col gap-[4px] text-[14px] font-book leading-[1.4] sm:text-[15px]">
         <span class="text-ink">{testimonial.name}</span>
-        <span class="text-ink-muted">{testimonial.role}, {testimonial.company}</span>
+        <span class="text-ink-muted">{testimonial.role}, {brand.name}</span>
       </figcaption>
     </figure>
   {/each}

@@ -9,6 +9,7 @@
     variant: 'primary' | 'secondary' | 'soft' | 'inverse' | 'inverse-outline';
     size: 'small' | 'medium' | 'large' | 'large-plus' | 'xlarge';
     shape?: 'pill' | 'soft-pill';
+    weight?: 'book' | 'text';
     fullWidth?: boolean;
     children: Snippet;
   };
@@ -17,6 +18,7 @@
     variant,
     size,
     shape = 'pill',
+    weight = 'book',
     fullWidth = false,
     children,
     href,
@@ -25,7 +27,7 @@
   }: ButtonLinkProps = $props();
 
   const baseClasses =
-    'inline-flex items-center justify-center font-book leading-none ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
+    'inline-flex cursor-pointer items-center justify-center leading-none ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2';
   const sizeClasses = {
     small: 'h-[40px] px-[12px] text-[14px]',
     medium: 'h-[44px] px-[10px] text-[14px]',
@@ -42,6 +44,7 @@
   };
   const classes = $derived([
     baseClasses,
+    weight === 'text' ? 'font-text' : 'font-book',
     shape === 'soft-pill'
       ? 'rounded-[20px] transition-[background-color,border-color,box-shadow,translate] duration-[180ms] motion-reduce:transition-none'
       : 'rounded-full transition-[color,background-color,border-color,box-shadow] duration-200',

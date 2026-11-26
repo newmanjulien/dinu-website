@@ -1,0 +1,44 @@
+/* Pricing fonts and shared Tailwind tokens. Component styles live in markup. */
+@font-face {
+  font-family: 'Dinu Pricing Inter';
+  src: url('/fonts/pricing/inter-400.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2070, U+2074-207E, U+2080-208E, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Dinu Pricing Inter';
+  src: url('/fonts/pricing/inter-500.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2070, U+2074-207E, U+2080-208E, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Dinu Pricing Newsreader';
+  src: url('/fonts/newsreader.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200 800;
+}
+
+@theme {
+  --font-pricing-inter: 'Dinu Pricing Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-pricing-newsreader: 'Dinu Pricing Newsreader', ui-serif, Georgia, Cambria, serif;
+  --color-pricing-ink: #21201c;
+  --color-pricing-muted: #63635e;
+  --color-pricing-surface: #fdfdfc;
+  --color-pricing-border: #dad9d6;
+  --color-pricing-border-strong: #cfceca;
+  --color-pricing-card: #f9f9f8;
+  --color-pricing-mobile-growth: #f1f0ef;
+  --animate-pricing-bar-in: pricing-bar-in 220ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  @keyframes pricing-bar-in {
+    from { opacity: 0; }
+  }
+}

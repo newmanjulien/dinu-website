@@ -12,7 +12,7 @@
 </script>
 
 <div class="w-full px-[18px] sm:px-8">
-  <ContentMeasure maxWidth={1246.3} class={className}>
+  <ContentMeasure maxWidth="var(--site-container-width)" class={className}>
     {@render children()}
   </ContentMeasure>
 </div>

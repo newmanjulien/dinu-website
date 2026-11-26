@@ -1,4 +1,5 @@
 @import "tailwindcss" source(none);
+@import "../components/pricing/pricing.css";
 @source "../components";
 @source "../../routes/**/*.svelte";
 
@@ -27,12 +28,13 @@
 }
 
 :root {
-  --site-bg: var(--color-canvas);
+  --site-bg: #fdfdfd;
   --site-font-body:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   --site-font-heading: "Newsreader", "Newsreader Fallback", serif;
   --site-mobile-header-height: 50px;
+  --site-container-width: 1246.3px;
   --site-footer-content-width: 1100px;
   --site-footer-padding: 2rem;
   --layer-chrome: 30;
@@ -57,70 +59,57 @@ body {
   min-width: 320px;
 }
 
-@layer components {
-  .site-shell {
-    --site-floating-bottom-clearance: var(--site-footer-padding);
-    position: relative;
-    isolation: isolate;
+@keyframes hero-content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hero-enter-offset, 4px));
   }
-
-  .homepage-shell {
-    --site-bg: #fdfdfd;
+  to {
+    opacity: 1;
+    transform: none;
   }
+}
 
-  .site-header,
-  .site-page,
-  #site-footer {
-    position: relative;
-    z-index: 1;
+@keyframes logo-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
-
-  .homepage-content {
-    padding-block: 150px 174px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  @media (min-width: 40rem) {
-    .homepage-content {
-      padding-block: 190px 214px;
-    }
+@keyframes brand-logo-blink {
+  0%, 100% {
+    opacity: 0;
   }
+  35% {
+    opacity: 1;
+  }
+}
 
-  @media (min-width: 64rem) {
-    .homepage-shell {
-      --site-floating-bottom-clearance: calc(
-        var(--homepage-rail-width) + var(--site-footer-padding)
-      );
-      padding-bottom: var(--homepage-rail-width);
-    }
+@keyframes draw-ribbon {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 
-    .homepage-hero {
-      position: relative;
-      z-index: 1;
-    }
+@keyframes booking-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
-    .homepage-hero .hero-customer-logos {
-      /* Subtract the existing centered gutter; only logos reserve space for the right rail. */
-      padding-right: max(
-        0px,
-        calc(var(--homepage-rail-width) + 2rem - (100vw - 100%) / 2)
-      );
-    }
-
-    .homepage-content {
-      --inner-bend-radius: max(
-        calc(48px - var(--homepage-band-width) / 2),
-        calc(var(--homepage-band-width) * 2)
-      );
-      margin-top: calc(var(--homepage-band-width) / -2);
-      margin-left: var(--homepage-rail-width);
-      padding-top: calc(190px + var(--homepage-band-width) / 2);
-      border-radius: var(--inner-bend-radius) 0 0 48px;
-      background: var(--site-bg);
-    }
-
-    .homepage-shell .brand-cta,
-    .homepage-shell .brand-footer {
-      margin-left: var(--homepage-rail-width);
-    }
+@keyframes booking-calendar-pulse {
+  0%, 100% {
+    opacity: 0;
+  }
+  40%, 60% {
+    opacity: 0.7;
   }
 }
