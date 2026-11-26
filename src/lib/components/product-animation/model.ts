@@ -1,6 +1,6 @@
 import { motionTiming, type GuidedTourStep } from '../animation/tour-model.ts';
 
-export type ContractStateId = 'baseline' | 'resale' | 'fees' | 'complete';
+export type ContractStateId = 'baseline' | 'payment-conceded' | 'liability-proposed';
 export interface PreparedRun {
 	text: string;
 	revision?: 'added' | 'removed';
@@ -38,8 +38,10 @@ export interface AnimationState {
 	clause: string;
 	box?: { clause: string; section?: string | null; scroll?: 'start' | 'end' };
 	hovered?: boolean;
-	/** Revision framing reveals the active clause's redline without a mobile overlay. */
-	viewport?: 'top' | 'clause' | 'revision' | 'actions';
+	/** Simulated request status; pending changes still block sending. */
+	approvalRequested?: boolean;
+	/** Opening keeps the first clause in view with minimal scrolling; revision hides the mobile overlay. */
+	viewport?: 'top' | 'opening' | 'clause' | 'revision' | 'actions';
 	opacity?: number;
 }
 export type AnimationTarget =
@@ -70,6 +72,8 @@ export function defineTour(steps: readonly AnimationStep[]): readonly AnimationS
 		if (before) {
 			if (before.clause !== scene.clause || before.viewport !== scene.viewport)
 				motion.document ??= Math.min(step.duration, scene.viewport === 'revision' ? 900 : 1700);
+			if (scene.viewport === 'opening' && (Boolean(before.box) !== Boolean(scene.box) || before.box?.section !== scene.box?.section))
+				motion.document ??= Math.min(step.duration, 700);
 			if (Boolean(before.box) !== Boolean(scene.box)) motion.paper ??= motionTiming.paper;
 			if (scene.box && scene.box.clause !== before.box?.clause) motion.guidance ??= motionTiming.guidance;
 			if (scene.box && (scene.box.section !== before.box?.section || scene.box.scroll !== before.box?.scroll ||

@@ -1,4 +1,4 @@
-/** Immutable coordinates and contract shapes from the Oceans source snapshot. */
+/** Immutable coordinates and contract shapes from the baseline sample agreement. */
 export interface SourcePoint { sourceKey: string; offset: number }
 export interface SourceRange { start: SourcePoint; end: SourcePoint }
 interface ReferenceAtom {

@@ -61,7 +61,7 @@
 			<div class="absolute inset-0 overflow-hidden [overflow-anchor:none]" bind:this={viewportElement}>
 				<div class="ml-20 w-[816px] py-6 [transform:translateX(232px)] group-data-[mobile=true]/animation:ml-3 group-data-[mobile=true]/animation:w-[calc(100%-24px)]" bind:this={columnElement}>
 					<ContractDocument bind:this={documentRenderer} {contract} {snapshot} {selectedTrigger} {hoveredTrigger} />
-					<ContractActions approvalCount={snapshot.approvalCount} highlighted={step.cursor?.target.kind === 'approval'} />
+					<ContractActions approvalCount={snapshot.approvalCount} requested={step.state.approvalRequested} highlighted={step.cursor?.target.kind === 'approval'} />
 				</div>
 				<div class="invisible absolute left-[920px] w-[440px] opacity-0 group-data-[mobile=true]/animation:left-6 group-data-[mobile=true]/animation:w-[calc(100%-48px)]" bind:this={railElement}>
 					{#key panel.id}<GuidancePanel {panel} openSection={step.state.box?.section} selected={snapshot.concessions[panel.id]} />{/key}

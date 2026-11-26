@@ -28,7 +28,7 @@ interface Elements { frame: HTMLElement; stage: HTMLElement; viewport: HTMLEleme
 interface FrameInputs { width: number; height: number; mobile: boolean; pixelRatio: number }
 interface Bounds { left: number; right: number; top: number; bottom: number }
 interface SceneMeasurements {
-	clauses: Map<string, Bounds>; revisions: Map<string, Bounds>; targets: Map<string, TargetPoint>;
+	clauses: Map<string, Bounds>; targets: Map<string, TargetPoint>;
 	panelBounds: Map<string, Bounds>; panelScrollHeight: number; panelHeight: number; actions: Bounds;
 }
 interface TargetPoint { x: number; y: number; attachment: 'document' | 'panel' | 'panel-frame' | 'origin' }
@@ -134,19 +134,16 @@ paginate: (state: ContractStateId, fontVersion: number) => Promise<boolean>) {
 			return { left: bounds.left - values.paper, right: bounds.right - values.paper, top: bounds.top + scroll, bottom: bounds.bottom + scroll };
 		};
 		const center = (bounds: Bounds, attachment: TargetPoint['attachment']): TargetPoint => ({ x: (bounds.left + bounds.right) / 2, y: (bounds.top + bounds.bottom) / 2, attachment });
-		const highlights = new Map<string, HTMLElement>(), revisionNodes = new Map<string, HTMLElement>();
+		const highlights = new Map<string, HTMLElement>();
 		for (const node of column.querySelectorAll<HTMLElement>('.contract-paper [data-highlight]')) {
 			const id = node.dataset.highlight!;
 			if (!highlights.has(id)) highlights.set(id, node);
-			if (!revisionNodes.has(id) && node.dataset.revision) revisionNodes.set(id, node);
 		}
-		const clauses = new Map<string, Bounds>(), revisions = new Map<string, Bounds>();
+		const clauses = new Map<string, Bounds>();
 		const targets = new Map<string, TargetPoint>(), panelBounds = new Map<string, Bounds>();
 		for (const entry of contract.panels) {
 			const node = highlights.get(entry.triggerId);
 			if (node) { clauses.set(entry.id, documentBounds(node)); targets.set(`clause:${entry.id}`, center(documentBounds(node, true), 'document')); }
-			const revision = revisionNodes.get(entry.triggerId);
-			if (revision) revisions.set(entry.id, documentBounds(revision));
 		}
 		const actions = documentBounds(stage.querySelector('[data-contract-actions]')!);
 		targets.set('approval', center(documentBounds(stage.querySelector('[data-animation-target="approval"]')!, true), 'document'));
@@ -165,9 +162,9 @@ paginate: (state: ContractStateId, fontVersion: number) => Promise<boolean>) {
 			};
 			for (const node of panel.querySelectorAll<HTMLElement>('[data-section], [data-concession-id]')) add(node.dataset.section ? `section:${node.dataset.section}` : `concession:${node.dataset.concessionId}`, node);
 			for (const node of panel.querySelectorAll<HTMLElement>('[data-section-body]')) panelBounds.set(`body:${node.dataset.sectionBody}`, contentBounds(node));
-			return { clauses, revisions, targets, panelBounds, actions, panelScrollHeight: panel.scrollHeight, panelHeight: Math.max(panel.scrollHeight + 2, bounds.bottom - bounds.top) };
+			return { clauses, targets, panelBounds, actions, panelScrollHeight: panel.scrollHeight, panelHeight: Math.max(panel.scrollHeight + 2, bounds.bottom - bounds.top) };
 		}
-		return { clauses, revisions, targets, panelBounds, actions, panelScrollHeight: 0, panelHeight: 0 };
+		return { clauses, targets, panelBounds, actions, panelScrollHeight: 0, panelHeight: 0 };
 	}
 
 	function readFrameInputs(): FrameInputs {
@@ -216,12 +213,12 @@ paginate: (state: ContractStateId, fontVersion: number) => Promise<boolean>) {
 		if (destroyed || revision !== version) return;
 		const documentLayoutChanged = await paginate(beat.state.contract, fontVersion);
 		if (destroyed || revision !== version) return;
-		const key = `${beat.state.contract}:${beat.state.box?.clause ?? beat.state.clause}:${beat.state.box?.section ?? ''}:${frameWidth}:${frameHeight}:${mobile}`;
+		const key = `${beat.state.contract}:${beat.state.box?.clause ?? beat.state.clause}:${beat.state.box?.section ?? ''}:${Boolean(beat.state.approvalRequested)}:${frameWidth}:${frameHeight}:${mobile}`;
 		if (!measurements || resize || documentLayoutChanged || key !== measurementKey) {
 			measurements = measureScene();
 			measurementKey = key;
 		}
-		const { clauses, revisions, actions: actionBounds } = measurements;
+		const { clauses, actions: actionBounds } = measurements;
 		const nextPanelTop = beat.state.box ? Math.max(0, clauses.get(beat.state.box.clause)?.top ?? 24) : 24;
 		const resolve = (wanted: AnimationTarget): TargetPoint | undefined => {
 			if (wanted.kind === 'origin') return { attachment: 'origin', x: 0, y: 0 };
@@ -259,7 +256,12 @@ paginate: (state: ContractStateId, fontVersion: number) => Promise<boolean>) {
 			panelScroll = clamp(panelScroll, measurements.panelScrollHeight - (boxHeight - 2));
 		}
 		const sceneScroll = (scene: AnimationState) => {
-			const bounds = (scene.viewport === 'revision' ? revisions.get(scene.clause) : undefined) ?? clauses.get(scene.clause);
+			const bounds = clauses.get(scene.clause);
+			if (scene.viewport === 'opening' && bounds) {
+				const panelBottom = scene.box ? bounds.top + (mobile ? 80 : 0) + Math.min(measurements!.panelHeight, height - (mobile ? 140 : 48)) : 0;
+				// Keep the opening view when it fits; otherwise reveal only the space needed.
+				return Math.max(0, Math.min(bounds.top - 24, Math.max(bounds.bottom, panelBottom) - height + 24));
+			}
 			return scene.viewport === 'top' ? 0 : scene.viewport === 'actions' ? actionBounds.bottom - height + 24 : bounds ? bounds.top - 24 : values.scroll;
 		};
 		if ((resize || restoring || documentLayoutChanged) && fromScene) {

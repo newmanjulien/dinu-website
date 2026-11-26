@@ -10,9 +10,8 @@ const overlays = items.map(toDocumentOverlay);
 const compose = createContractComposer(blocks, overlays);
 const selections = {
 	baseline: {},
-	resale: { 'demo:resale': 'resale-ordinary-course-billing' },
-	fees: { 'demo:resale': 'resale-ordinary-course-billing', 'demo:annual-fee-increase-main': 'annual-fee-increase-five-percent' },
-	complete: { 'demo:resale': 'resale-ordinary-course-billing', 'demo:annual-fee-increase-main': 'annual-fee-increase-five-percent', 'demo:attorneys-fees': 'attorneys-fees-mutual' }
+	'payment-conceded': { 'demo:payment-terms': 'payment-net-45' },
+	'liability-proposed': { 'demo:payment-terms': 'payment-net-45', 'demo:liability-limits': 'liability-cap-twelve-months' }
 };
 function prepare(block) {
 	if (block.kind === 'table') {
@@ -43,13 +42,13 @@ for (const [id, concessions] of Object.entries(selections)) {
 	};
 }
 const blockOrder = blocks.map((block) => block.blockKey);
-// The agreement explicitly requests a separate signature page; Exhibit A also
-// begins on its own sheet. All other page breaks follow the rendered text.
-const pageBreaks = ['paragraph-execution', 'heading-contract-section-227'];
+// The populated Order Form begins on its own sheet.
+// All other page breaks follow the rendered agreement text.
+const pageBreaks = ['heading-order-form'];
 for (const id of pageBreaks) {
 	if (!blockOrder.includes(id)) throw new Error(`Missing contract page break: ${id}`);
 }
-const panelIds = ['demo:resale', 'demo:amendments-statement-of-work', 'demo:annual-fee-increase-main', 'demo:attorneys-fees', 'demo:assignment'];
+const panelIds = ['demo:subscription-use', 'demo:assignment', 'demo:payment-terms', 'demo:liability-limits', 'demo:renewal-pricing', 'demo:publicity'];
 const panels = panelIds.map((id) => {
 	const item = items.find((item) => item._id === id);
 	if (!item) throw new Error(`Missing animation box: ${id}`);

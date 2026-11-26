@@ -1,7 +1,7 @@
 import { defineTour, cursorMoveDuration, motionTiming, type AnimationState, type AnimationStep, type AnimationTarget } from './model.ts';
 
 const steps: AnimationStep[] = [];
-let state: AnimationState = { clause: 'demo:resale', contract: 'baseline', viewport: 'top' };
+let state: AnimationState = { clause: 'demo:subscription-use', contract: 'baseline', viewport: 'opening' };
 function hold(phase: string, duration: number, target: AnimationTarget | null = null, mode: 'idle' | 'clicking' = 'idle', move?: number) {
 	steps.push({ phase, duration, state: { ...state }, cursor: target ? { target, mode, ...(move ? { move } : {}) } : null });
 }
@@ -37,44 +37,32 @@ function concede(name: string, contract: AnimationState['contract'], concession:
 	hold(`${name}-redline`, redline);
 }
 
-hold('untouched', 1380);
-state = { ...state, viewport: 'clause' };
-hold('resale-travel', 1700);
-openBox('resale', 1100, 240);
-advice('resale-negotiation', 'negotiation', 2200);
-concede('resale', 'resale', 'resale-ordinary-course-billing', 1400, 1680);
+hold('untouched', 1400);
+openBox('subscription', 3000, 240);
+advice('subscription-negotiation', 'negotiation', 3500);
 
-travel('amendments', 'demo:amendments-statement-of-work', 900);
-openBox('amendments', 2690);
+travel('payment', 'demo:payment-terms', 1700);
+openBox('payment', 2800);
+concede('payment', 'payment-conceded', 'payment-net-45', 3500, 2400);
 
-travel('annual', 'demo:annual-fee-increase-main', 1100);
-openBox('annual', 1100);
-advice('annual-objections', 'commonObjections', 1100);
-concede('annual', 'fees', 'annual-fee-increase-five-percent', 1400, 1680);
-
-travel('attorneys', 'demo:attorneys-fees', 1700);
-openBox('attorneys', 1500);
-advice('attorneys-negotiation', 'negotiation', 1800);
-state = { ...state, box: { ...state.box!, scroll: 'end' } };
-hold('attorneys-negotiation-read-more', 2200, { kind: 'panel', clause: state.box!.clause }, 'idle', cursorMoveDuration);
-advice('attorneys-approval', 'changesNeedApproval', 1100);
-concede('attorneys', 'complete', 'attorneys-fees-mutual', 1500, 1680);
-
-travel('assignment', 'demo:assignment', 900);
-openBox('assignment', 2690);
+travel('liability', 'demo:liability-limits', 1700);
+openBox('liability', 3500);
+advice('liability-approval', 'changesNeedApproval', 1200);
+concede('liability', 'liability-proposed', 'liability-cap-twelve-months', 4000, 2800);
 
 state = { ...state, box: undefined, viewport: 'actions' };
 hold('approval-travel', 1580, { kind: 'origin' }, 'idle', cursorMoveDuration);
 click('approval', { kind: 'approval' });
-hold('approval-clicked', 350, { kind: 'approval' });
+state = { ...state, approvalRequested: true };
+hold('approval-requested', 600, { kind: 'approval' });
 hold('completed', 4000);
 state = { ...state, opacity: 0 };
 hold('fade-out', motionTiming.loopFade);
-state = { clause: 'demo:resale', contract: 'baseline', viewport: 'top', opacity: 0 };
+state = { clause: 'demo:subscription-use', contract: 'baseline', viewport: 'opening', opacity: 0 };
 steps.push({ phase: 'reset-hidden', duration: 1, state: { ...state }, cursor: null, motion: { document: 0, paper: 0, opacity: 0 } });
 state = { ...state, opacity: 1 };
 hold('fade-in', motionTiming.loopFade);
 
 export const heroTour: ReadonlyArray<AnimationStep> = defineTour(steps);
-// The loop ends on the baseline, but reduced motion shows the completed contract.
+// The loop ends on the baseline; reduced motion shows the final pending-approval scene.
 export const heroCompletedStep = heroTour.find((step) => step.phase === 'completed')!;

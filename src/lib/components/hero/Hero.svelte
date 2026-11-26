@@ -100,7 +100,7 @@
             class="h-full w-full overflow-hidden rounded-[10px] border border-line bg-surface sm:rounded-[12px]"
           >
             <ProductAnimation
-              label="A guided contract negotiation: open Resale, Amendments to Statement of Work, the annual fee increase, Attorneys’ Fees, and Assignment. Explore the advice and apply three concessions, two requiring approval, then click Ask for approval. The walkthrough repeats."
+              label="A guided negotiation of a software agreement: start near the top by explaining that users can be replaced without adding seats, apply a preapproved change from net 30 to net 45, then propose increasing the liability cap from six to twelve months of subscription fees. Request Legal approval for the liability change. One change remains pending and sending to the buyer is blocked. The walkthrough repeats; reduced motion shows the pending approval scene."
             />
           </div>
         </div>

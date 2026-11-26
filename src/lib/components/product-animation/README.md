@@ -10,14 +10,40 @@ Their contents are inert; the cursor never dispatches events or sends requests.
 
 ## Content preparation
 
-`data/contract.json` contains the full Oceans contract, compact highlighted runs,
-ordered blocks, deliberate signature/exhibit breaks, guidance, and four finite contract states. Each state stores only
-changed blocks, selected concessions, and its approval count. The annual fee
-concession changes both the agreement and Exhibit A.
+`data/contract.json` contains a Software Subscription Agreement between
+Sample Software Co. and Example Customer Co. for Workspace Cloud, including its
+populated Order Form, compact highlighted runs, ordered blocks, guidance, and
+three finite contract states.
+
+The sample uses US dollars, Pacific time, California state holidays, California
+law and San Francisco courts. The provider is a Delaware corporation; the
+customer is a California corporation.
+
+Each state stores only changed blocks, selected concessions, and its approval count:
+
+| State | Selected concessions | Pending approvals |
+| --- | --- | --- |
+| `baseline` | None | 0 |
+| `payment-conceded` | `payment-net-45` | 0 |
+| `liability-proposed` | `payment-net-45`, `liability-cap-twelve-months` | 1 |
+
+The source playbook has 14 guidance items and six concession options. Net 45,
+a 3% renewal-increase limit, and removing publicity permission are preapproved.
+Quarterly invoicing and removing renewal increases need Finance approval;
+the twelve-month liability cap needs Legal approval. Payment alternatives are
+mutually exclusive per item, as are renewal-price alternatives. Both payment
+concessions update Section 3 and the corresponding Order Form field.
+
+The 23 highlight targets focus on policy passages and key Order Form values,
+leaving most document text plain. Renewal pricing, publicity, security, and
+other useful terms remain highlighted even when the hero does not visit them.
+Ranges covering a full-paragraph concession retain that paragraph so the
+replacement has one unambiguous guidance owner.
 
 Added text uses yellowish green; deleted text uses gray with strikethrough.
 Selection and hover only color unchanged runs. Revised runs retain trigger
-markers for framing. Plain runs render as text without extra wrappers.
+markers for framing. Clause and redline views use the same anchor, avoiding a
+second recenter after applying a concession. Plain runs render as text without extra wrappers.
 
 Run `npm run prepare:animations` using Node 24 or later after changing the source
 JSON, concessions, or deliberate page breaks. Preparation imports TypeScript directly;
@@ -26,7 +52,7 @@ immutable source index, atoms, and trigger geometry once and returns a function
 that composes each selection independently. Unknown items and concessions,
 conflicts, invalid ranges, and ambiguous trigger ownership fail preparation.
 States retain source numbering, references, optional paragraphs, and readable
-redlines. Baseline composition runs once, followed by the three changed states.
+redlines. Baseline composition runs once, followed by the two changed states.
 
 Source data and composition live in `scripts/product-animation` and stay out of
 browser bundles. The browser performs no indexing, conflict resolution, text
@@ -34,7 +60,7 @@ profiling, or editing. `paginate-contract.ts` fills sheets by measuring clones o
 the rendered blocks at the document's actual width. Paragraphs split at word
 boundaries with their highlight and revision runs intact. Headings stay with
 following text, tables stay together, and paragraph breaks avoid stranded lines.
-The signature page and Exhibit A retain their explicit breaks. Desktop sheets
+The Order Form starts at the explicit `heading-order-form` break. Desktop sheets
 are 1056px tall; mobile sheets are 540px tall with the existing readable type.
 
 ## Timeline and clock
@@ -46,7 +72,7 @@ open box. Concession targets specify the actual concession ID. `defineTour`
 expands scene changes into motion cues at module initialization; phase names
 are identifiers only. Shared timing constants and clock-sampled easing retain
 the existing motion. Product-animation targets are validated against prepared
-content by the build-time timeline check. The pure validator stays outside DOM
+content by `node scripts/validate-feature-tours.ts` during validation. The pure validator stays outside DOM
 geometry and the browser bundle.
 
 `components/animation/tour-player.svelte.ts` owns one logical clock per illustration.
@@ -83,14 +109,14 @@ keeps its looping session until unmount. Cleanup is idempotent.
 `scene-geometry.ts` owns DOM measurement, cached target coordinates,
 scale, scrolling, clause anchors, and presentation frames. It measures after
 scene DOM updates, awaits document pagination, and invalidates its cache when contract or guidance content,
-frame dimensions, or fonts change. Ordinary beats reuse measurements. Reads
+frame dimensions, fonts, or the simulated approval-request status change. Ordinary beats reuse measurements. Reads
 are grouped before layout writes; animation frames use cached coordinates and
 known offsets. Unchanged scroll and style values skip DOM writes; measurement
 invalidates scroll caches when content changes or the guidance node is replaced.
 Panel target positions use measured panel bounds. `ContractDocument` receives a
 prepared snapshot and optional selected/hovered trigger IDs independently, so
 cursor, viewport, opacity, and unrelated guidance updates do not rerender it.
-`ContractDocument` caches the four layouts for the current paper width and fonts,
+`ContractDocument` caches the three layouts for the current paper width and fonts,
 reusing them during ordinary beats and subsequent loops. A width or font change
 clears those layouts. Before client pagination is ready, the ordered contract
 renders continuously. Prepared blocks are a discriminated union with required
@@ -105,8 +131,11 @@ loading forces fresh measurements even when those inputs remain unchanged.
 The desktop stage stays 1440px wide and scales proportionally to the frame.
 Mobile stage width follows the frame. Stage height follows the frame's scale
 to size guidance and scroll limits. The hero
-starts at the contract top with centered paper and no
-box. The paper shifts when the first box opens. Boxes stay open during travel
+starts with Section 1's user-replacement sentence in the opening view, centered
+paper, and no box. The opening framing keeps the document at the top when the
+sentence fits, scrolling only enough to reveal it on shorter frames. Opening a
+guidance section similarly reveals only the space its panel needs. The paper
+shifts when the first box opens. Boxes stay open during travel
 and are replaced on the next clause click. Guidance attaches to its own clause
 inside the document viewport. Mobile preserves the 80px anchor offset and hides
 the guidance overlay during revision framing. The rail owns entrance motion for
@@ -119,8 +148,17 @@ or panel movement. Translation preserves the cursor tip and inverse scale
 preserves its apparent size. Resizing preserves the beat and elapsed progress,
 remeasures, and snaps to the corresponding frame without replaying entrances.
 
-The hero visits five boxes, applies three concessions, opens two description-only
-boxes, and ends with approval. It loops after the completed hold and fade/reset.
+The hero explains that replacing users needs no extra seat, then moves forward
+to Section 3 for preapproved net 45 and Section 8 for the liability proposal.
+It shows Legal approval guidance for 1,200ms, without a “read more” scroll, before proposing a
+twelve-month liability cap. The baseline cap is six months of subscription fees
+($12,000 for the initial year); the proposal is twelve months ($24,000).
+Neither cap depends on invoices already paid. The hero requests approval and
+ends with one change awaiting Legal approval and sending blocked. The caption
+remains “1 of your changes needs approval” after the request. Request status
+is presentation state (`approvalRequested`), not a grant of approval or a change
+to the prepared approval count. It loops after the completed hold and fade/reset,
+returning to the baseline user-replacement opening.
 `heroCompletedStep` supplies the reduced-motion scene separately from the loop's
 last beat. Feature tours finish once.
 
@@ -132,9 +170,15 @@ events passing through to website scrolling.
 
 ## Validation
 
-Run `npm run build` for Svelte checks, existing timeline and playback validation,
-and the production build. Do not create tests. Browser review is left to the
-site owner. When reviewing motion geometry, check desktop and mobile centering,
+Run validation in a dedicated phase. After source changes, regenerate with
+`npm run prepare:animations`. Use `npx svelte-kit sync`,
+`npx svelte-check --tsconfig ./tsconfig.json`, and `npx vite build` for component
+validation and production compilation. `npm run check` and `npm run build`
+also run existing playback tests; use those tests only when necessary. Do not
+create or expand tests. After tour changes, run
+`node scripts/validate-feature-tours.ts` to check authored durations, final scenes,
+and targets against prepared content. Browser review is left to the site owner.
+When reviewing motion geometry, check desktop and mobile centering,
 clause and pointer alignment, panel scrolling, redlines, approval, looping, live reduced
 motion, offscreen pause, short viewports, and resizing during movement.
 

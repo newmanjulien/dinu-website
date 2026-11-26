@@ -3,7 +3,10 @@
 All three nonhero animations use `FeatureIllustration.svelte`: a drawn contract
 page with optional guidance and actions in the site's typography and colors. They share
 playback and the cursor with the hero through `components/animation`, and do not
-import product fixtures or scene geometry.
+import product fixtures or scene geometry. Their authored excerpts follow the
+same Workspace Cloud agreement as the hero. Keep contract wording,
+Order Form values, approval roles, and accessible descriptions aligned with
+`scripts/product-animation/data/contract-blocks.json` and `playbook-items.json`.
 
 ## Ownership
 
@@ -40,9 +43,9 @@ Pages have square corners and no shadow.
 
 `ContractExcerpt` supplies surrounding prose. It places the important clause
 after a short opening paragraph by default. Summary uses `clausePosition="middle"`
-to place its clause after the opening services, access, and scope paragraphs.
-It adds progress reporting and coordination terms around the highlighted clause
-to fill out the document.
+to place its clause after short subscription, ownership, and data-protection
+excerpts. Shared surrounding prose contains no payment period, so it stays
+consistent when the negotiation widget changes net 30 to net 45.
 Contract content renders once in normal flow.
 The frame clips overflow; adding text pushes later paragraphs below the visible
 page. There are no hidden sizing copies or overlapping action labels.
@@ -74,21 +77,27 @@ Features play once and retain the completed scene.
 
 Widgets choose how to present the result:
 
-- Summary first clicks the resale clause to highlight it and reveal its plain
-  English explanation. After a 1,000ms reading pause, the cursor moves from the
+- Summary first clicks the already-highlighted name-and-logo permission to reveal
+  its plain English explanation. Listing a customer does not permit testimonials,
+  case studies, press releases, or implied endorsement. After a 1,000ms reading pause, the cursor moves from the
   clause to “How to negotiate” over 600ms and clicks to open advice about the
-  buyer's ability to bill its own clients. `expanded` becomes true after this
+  preapproved option of requiring the customer's written permission first.
+  No contract change is applied. `expanded` becomes true after this
   second click. Its card is vertically centered beside the document. Card resizing
   updates the cursor's target as the dropdown expands.
-- Negotiation uses `revealed` to immediately insert the concession redline and
+- Negotiation uses `revealed` to immediately change 30 to 45 days in both
+  Section 3 and the Order Form, keeping annual invoicing unchanged, and
   swap the inline blue “Apply concession” action for red “Remove concession.”
   After the reading pause, the cursor opens a second dropdown, “Changes need to
-  be approved,” to reveal “Requires Ben’s approval.” The preferred concession
+  be approved,” to show only the approver name: Finance, for the separate
+  quarterly-billing option. Exact net 45 remains preapproved. The preferred concession
   stays expanded and the contract keeps its applied change.
-- Approval shows the original contract's closing fee terms and table, followed
-  by “Ask for approval,” disabled “Send to buyer,” and “1 of your changes needs
-  approval.” As in the original demo, clicking leaves those labels unchanged.
-  It does not imply that the change has been approved.
+- Approval shows contract prose with the proposed twelve-month liability cap,
+  full annual-fee calculation, and $24,000 initial cap redlined. It needs Legal
+  approval. Clicking “Ask for approval” sets `revealed` and disables the request
+  button. The original caption, “1 of your changes needs approval,” remains
+  below the buttons; there is no caption above them. “Send to buyer” stays disabled. This is a simulated pending
+  request; no event is dispatched and no approval is granted.
 
 The cursor initially aims at the primary target's center from 52px right and
 64px below it. Each movement captures the displayed cursor position once, before
@@ -118,5 +127,8 @@ and cleanup is idempotent on unmount. Queued callbacks cannot restart a disposed
 feature. Unfinished features shown in reduced motion retain their session so
 they can resume when the preference is disabled.
 
-Run `npm run build` for the existing checks and production build. Browser review
-is left to the site owner; do not add tests without an explicit request.
+Keep validation in a dedicated phase. Use `npx svelte-kit sync`,
+`npx svelte-check --tsconfig ./tsconfig.json`, and `npx vite build` for component
+validation and production compilation. The npm check/build scripts also run
+existing playback tests; use those only when necessary. Browser review is left
+to the site owner; do not add tests without an explicit request.

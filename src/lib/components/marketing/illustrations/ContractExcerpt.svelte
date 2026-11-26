@@ -3,10 +3,10 @@
 	let { children, clausePosition = 'opening' }: { children: Snippet; clausePosition?: 'opening' | 'middle' } = $props();
 </script>
 
-<p class="m-0 text-ink-muted">The Professional shall provide the services described in the Statement of Work with reasonable skill and care.</p>
+<p class="m-0 text-ink-muted">Provider will make Workspace Cloud, its hosted project and document collaboration software, available to Customer during the subscription term.</p>
 {#if clausePosition === 'opening'}{@render children()}{/if}
-<p class="m-0 text-ink-muted">The Customer shall make available the information, materials and access reasonably required to carry out those services. If a delay affects the agreed schedule, the parties shall work together to agree revised delivery dates.</p>
-<p class="m-0 text-ink-muted">Changes to the scope of work or fees must be agreed in writing before work begins.</p>
+<p class="m-0 text-ink-muted">Provider owns the service and its documentation. Customer owns Customer Data. Each party retains its other intellectual property; no ownership transfers under this Agreement.</p>
+<p class="m-0 text-ink-muted">Customer Data remains protected for as long as the receiving party retains it.</p>
 {#if clausePosition === 'middle'}{@render children()}{/if}
-<p class="m-0 text-ink-muted">Fees shall be invoiced monthly and are payable within thirty days of receipt. The Customer shall notify the Professional promptly of any disputed amount, giving reasonable details of the dispute, and shall pay the undisputed balance when due. The parties shall use reasonable efforts to resolve any outstanding billing questions.</p>
-<p class="m-0 text-ink-muted">Each party shall keep the other party’s confidential information secure and use it only to perform its obligations under this Agreement. These obligations shall continue after the services end.</p>
+<p class="m-0 text-ink-muted">Neither party may terminate the subscription early for convenience. Nonrenewal ends the subscription at the end of the current term and does not create an additional charge.</p>
+<p class="m-0 text-ink-muted">Neither party’s failure to enforce a term waives it. If a provision is unenforceable, the remaining provisions continue in effect. The parties are independent contractors. Electronic signatures and counterparts are permitted.</p>

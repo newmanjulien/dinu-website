@@ -52,8 +52,7 @@
     class={[
       'customer-logos [--logo-scale:0.9025] relative z-[2] mx-auto w-full items-center',
       layout === 'demo' ? `
-        flex justify-between lg:gap-[33px] max-lg:gap-[clamp(16px,2.5cqw,24px)] max-lg:[--demo-enlargement:1]
-        max-lg:supports-[height:calc(1px*(1px/1px))]:[--demo-enlargement:clamp(1,calc(1.25-(100cqw-704px)/(936px-704px)*0.25),1.25)]
+        flex justify-between lg:gap-[33px] max-lg:gap-[clamp(16px,2.5cqw,24px)]
       ` : [
         'max-w-[880px] gap-[clamp(26px,calc(2.3vw+5px),36px)] px-2 max-md:max-w-[420px] max-md:gap-[clamp(23px,calc(4.75vw+4px),31px)] max-md:px-0',
         columns !== undefined ? 'grid grid-cols-[repeat(var(--desktop-columns),minmax(0,1fr))] gap-y-2.5 max-md:grid-cols-[repeat(var(--mobile-columns),minmax(0,1fr))] max-md:gap-y-6' : 'flex',
@@ -71,23 +70,27 @@
       <div
         class={[
           'logo-item group/logo relative grid h-9 min-w-0 place-items-center first:[--tooltip-anchor:0%] last:[--tooltip-anchor:100%]',
-          layout === 'demo' ? 'lg:flex-none max-lg:flex-[0_1_calc(var(--logo-height)*var(--logo-ratio)*var(--logo-scale)*var(--demo-enlargement))]' : 'flex-none',
+          layout === 'demo' ? 'lg:flex-none max-lg:flex-[0_1_calc(var(--logo-height)*var(--logo-ratio)*var(--logo-scale))]' : 'flex-none',
           animate && 'motion-safe:animate-[logo-enter_220ms_cubic-bezier(0.22,1,0.36,1)_calc(var(--logos-enter-delay,0ms)+var(--logo-index)*70ms)_both]',
           layout === 'default' && mobileCount !== undefined && index >= mobileCount && 'max-md:hidden',
           layout === 'default' && mobileCount !== undefined && index === mobileCount - 1 && 'max-md:[--tooltip-anchor:100%]',
           layout === 'demo' && [
-            index >= 8 && 'max-lg:hidden lg:@max-[897px]/customer-logos:hidden',
-            index === 7 && 'max-lg:[--tooltip-anchor:100%] lg:@max-[897px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 8 && 'max-lg:hidden lg:@max-[960px]/customer-logos:hidden',
+            index === 7 && 'max-lg:[--tooltip-anchor:100%] lg:@max-[960px]/customer-logos:[--tooltip-anchor:100%]',
             index >= 9 && 'lg:@max-[1100px]/customer-logos:hidden',
             index === 8 && 'lg:@max-[1100px]/customer-logos:[--tooltip-anchor:100%]',
             index >= 10 && 'lg:@max-[1225px]/customer-logos:hidden',
             index === 9 && 'lg:@max-[1225px]/customer-logos:[--tooltip-anchor:100%]',
-            index >= 4 && 'max-lg:@max-[440px]/customer-logos:hidden',
-            index === 3 && 'max-lg:@max-[440px]/customer-logos:[--tooltip-anchor:100%]',
-            index >= 5 && 'max-lg:@max-[560px]/customer-logos:hidden',
-            index === 4 && 'max-lg:@max-[560px]/customer-logos:[--tooltip-anchor:100%]',
-            index >= 6 && 'max-lg:@max-[704px]/customer-logos:hidden',
-            index === 5 && 'max-lg:@max-[704px]/customer-logos:[--tooltip-anchor:100%]'
+            index >= 3 && 'max-lg:@max-[380px]/customer-logos:hidden',
+            index === 2 && 'max-lg:@max-[380px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 4 && 'max-lg:@max-[500px]/customer-logos:hidden',
+            index === 3 && 'max-lg:@max-[500px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 5 && 'max-lg:@max-[600px]/customer-logos:hidden',
+            index === 4 && 'max-lg:@max-[600px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 6 && 'max-lg:@max-[720px]/customer-logos:hidden',
+            index === 5 && 'max-lg:@max-[720px]/customer-logos:[--tooltip-anchor:100%]',
+            index >= 7 && 'max-lg:@max-[840px]/customer-logos:hidden',
+            index === 6 && 'max-lg:@max-[840px]/customer-logos:[--tooltip-anchor:100%]'
           ]
         ]}
         style:--logo-index={index}
