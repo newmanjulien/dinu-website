@@ -14,8 +14,8 @@
   afterNavigate(() => { open = false; });
 </script>
 
-<header class="z-(--layer-chrome) relative flex h-[var(--site-mobile-header-height)] w-full shrink-0 items-center justify-between bg-[var(--site-bg)] px-[18px] sm:px-8 lg:hidden">
-  <a href="/" class="h-[28.35px] w-fit" aria-label="Dinu home">
+<header class="z-(--layer-chrome) relative flex h-[var(--site-mobile-header-height)] w-full shrink-0 items-center justify-between bg-[var(--site-bg)] px-[18px] sm:px-8 md:hidden">
+  <a href="/" class="block h-[34.18px] w-fit shrink-0 translate-y-[2px]" aria-label="Dinu home">
     <BrandLogo />
   </a>
   <button
@@ -39,20 +39,19 @@
       aria-label="Mobile primary"
       transition:slide={{ duration: reduceMotion.current ? 0 : 380, axis: 'y', easing: cubicOut }}
     >
-      <div class="flex flex-col px-[18px] pt-[26px] sm:px-8">
-        <h2 class="mb-[14px] text-[12px] font-book uppercase leading-none tracking-[0.12em] text-ink-muted">Dinu</h2>
+      <div class="flex flex-col gap-[6px] px-[18px] pt-[26px] sm:px-8">
         <a
           href="/pricing"
           aria-current={page.url.pathname === '/pricing' ? 'page' : undefined}
-          class="-mx-[8px] rounded-[8px] px-[8px] py-[6px] text-[21px] leading-none text-ink-muted hover:bg-hover"
+          class="-mx-[8px] rounded-[8px] px-[8px] py-[6px] text-[19px] leading-none text-ink hover:bg-hover"
         >Pricing</a>
         <a
           href="/about"
           aria-current={page.url.pathname === '/about' ? 'page' : undefined}
-          class="-mx-[8px] rounded-[8px] px-[8px] py-[6px] text-[21px] leading-none text-ink-muted hover:bg-hover"
+          class="-mx-[8px] rounded-[8px] px-[8px] py-[6px] text-[19px] leading-none text-ink hover:bg-hover"
         >About</a>
       </div>
-      <div class="mt-[30px] flex flex-col gap-[12px] border-t border-line px-[18px] pt-[24px] sm:px-8">
+      <div class="mt-[30px] grid grid-cols-2 gap-[12px] border-t border-line px-[18px] pt-[24px] sm:px-8">
         <ButtonLink
           href={createPortalAuthUrl('login', page.url.pathname)}
           target="_blank"

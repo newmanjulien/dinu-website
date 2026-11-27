@@ -6,7 +6,7 @@
   import { createPortalAuthUrl } from '$lib/utils/portal-auth';
 </script>
 
-<header class="site-header relative z-[1] hidden h-[72px] shrink-0 items-center lg:flex">
+<header class="site-header relative z-[1] hidden h-[72px] shrink-0 items-center md:flex">
   <SiteContainer class="flex items-center justify-between">
     <a href="/" class="block h-[34.18px] w-fit" aria-label="Dinu home">
       <BrandLogo />

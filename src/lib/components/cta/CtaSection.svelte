@@ -16,7 +16,7 @@
     height="200"
     class="pointer-events-none absolute right-[clamp(16px,calc(3vw-2px),42px)] bottom-full hidden h-auto w-[123.5px] select-none lg:block"
   />
-  <ContentMeasure maxWidth="var(--site-footer-content-width)" class="flex flex-col items-center gap-[33px] text-center md:flex-row md:justify-between md:gap-8 md:text-left">
+  <ContentMeasure maxWidth="var(--site-footer-content-width)" class="flex flex-col items-stretch gap-[33px] text-left md:flex-row md:items-center md:justify-between md:gap-8">
     <div>
       <h2 class="font-heading text-[26px] leading-[1.08] sm:text-[36px] sm:leading-[1.06]">
         Speed up your revenue
@@ -27,7 +27,7 @@
       </p>
     </div>
 
-    <div class="flex shrink-0 flex-wrap items-center justify-center gap-[12px]">
+    <div class="flex w-full shrink-0 flex-col gap-[12px] md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-center">
       <ButtonLink
         href={createPortalAuthUrl('join', '/')}
         target="_blank"
